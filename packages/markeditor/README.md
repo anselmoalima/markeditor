@@ -76,7 +76,6 @@ Initial bundle (no Monaco): **< 80 KB gzip**. Monaco loads lazily on first edit 
 
 ## Links
 
-- [Playground](https://markeditor.vercel.app) — live demo _(deploy in Phase 6)_
 - [GitHub](https://github.com/anselmoalima/markeditor) — source, issues, PRs
 - Changelog — see [Releases](https://github.com/anselmoalima/markeditor/releases)
 

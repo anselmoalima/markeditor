@@ -40,10 +40,6 @@ export default function App() {
 }
 ```
 
-## Playground
-
-Live demo → [markeditor.vercel.app](https://markeditor.vercel.app) _(deploy in Phase 6)_
-
 ## Docs
 
 - [PRD](PRD.md) — product requirements and feature roadmap
