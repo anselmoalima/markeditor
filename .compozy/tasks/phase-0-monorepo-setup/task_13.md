@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: README + badges + CONTRIBUTING.md
 type: docs
 complexity: low
@@ -32,11 +32,11 @@ Write the root `README.md` with project pitch + badges (npm, CI, coverage, bundl
 
 ## Subtasks
 
-- [ ] 13.1 Author root `README.md` with badges + pitch + install/usage + links.
-- [ ] 13.2 Author `packages/markeditor/README.md` (NPM-facing variant).
-- [ ] 13.3 Author `CONTRIBUTING.md` covering setup, commands, TDD, Changesets, release.
-- [ ] 13.4 Verify every badge URL renders correctly.
-- [ ] 13.5 Cross-link `README.md` ↔ `CONTRIBUTING.md` ↔ `PRD.md` ↔ `DESIGN.md` ↔ `CLAUDE.md`.
+- [x] 13.1 Author root `README.md` with badges + pitch + install/usage + links.
+- [x] 13.2 Author `packages/markeditor/README.md` (NPM-facing variant).
+- [x] 13.3 Author `CONTRIBUTING.md` covering setup, commands, TDD, Changesets, release.
+- [x] 13.4 Verify every badge URL renders correctly.
+- [x] 13.5 Cross-link `README.md` ↔ `CONTRIBUTING.md` ↔ `PRD.md` ↔ `DESIGN.md` ↔ `CLAUDE.md`.
 
 ## Implementation Details
 

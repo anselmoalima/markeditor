@@ -16,4 +16,4 @@
 | 10 | ci.yml matrix Node 18/20/22 × React 18/19 | completed | high | task_03, task_05, task_06, task_08, task_09 |
 | 11 | size.yml + release.yml with OIDC provenance | completed | high | task_09, task_10 |
 | 12 | Smoke dry-run release (0.0.0-test tag) | pending | medium | task_11 |
-| 13 | README + badges + CONTRIBUTING.md | pending | low | task_10, task_11 |
+| 13 | README + badges + CONTRIBUTING.md | completed | low | task_10, task_11 |

@@ -1,0 +1,14 @@
+{
+  "ignorePatterns": [
+    { "pattern": "^https://markeditor\\.vercel\\.app" },
+    { "pattern": "^https://www\\.npmjs\\.com/package/markeditor" },
+    { "pattern": "^https://bundlephobia\\.com/package/markeditor" },
+    { "pattern": "^https://codecov\\.io/gh/anselmoalima/markeditor" },
+    {
+      "pattern": "^https://github\\.com/anselmoalima/markeditor/actions/workflows/ci\\.yml/badge\\.svg"
+    }
+  ],
+  "timeout": "20s",
+  "retryOn429": true,
+  "aliveStatusCodes": [200, 206]
+}
