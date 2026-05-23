@@ -30,4 +30,4 @@ ESLint flat v9 + Prettier + Husky/lint-staged — **completed**.
 
 ## Ready for Next Run
 
-task_04 (packages/markmd skeleton) can proceed. Every `.ts`/`.tsx` file it adds must pass `pnpm lint`.
+task_04 (packages/markeditor skeleton) can proceed. Every `.ts`/`.tsx` file it adds must pass `pnpm lint`.

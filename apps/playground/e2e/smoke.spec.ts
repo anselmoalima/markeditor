@@ -10,7 +10,7 @@ test('mounts editor with no a11y violations', async ({ page }) => {
   });
 
   await page.goto('/');
-  await expect(page.locator('[data-testid="markmd-editor"]')).toBeVisible({
+  await expect(page.locator('[data-testid="mark-editor"]')).toBeVisible({
     timeout: 5000,
   });
 

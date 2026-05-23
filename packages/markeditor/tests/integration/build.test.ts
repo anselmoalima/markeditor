@@ -40,18 +40,18 @@ describe('built artifacts exist', () => {
   });
 });
 
-describe('ESM import resolves MarkmdEditor', () => {
+describe('ESM import resolves MarkEditor', () => {
   it('node --input-type=module dynamic import exits 0', () => {
     const mjs = resolve(distDir, 'index.mjs');
-    const cmd = `node --input-type=module -e "import('${mjs}').then(m => process.exit(m.MarkmdEditor ? 0 : 1)).catch(() => process.exit(1))"`;
+    const cmd = `node --input-type=module -e "import('${mjs}').then(m => process.exit(m.MarkEditor ? 0 : 1)).catch(() => process.exit(1))"`;
     expect(() => execSync(cmd, { stdio: 'pipe' })).not.toThrow();
   });
 });
 
-describe('CJS require resolves MarkmdEditor', () => {
+describe('CJS require resolves MarkEditor', () => {
   it('node -e require exits 0', () => {
     const cjs = resolve(distDir, 'index.cjs');
-    const cmd = `node -e "const m = require('${cjs}'); process.exit(m.MarkmdEditor ? 0 : 1)"`;
+    const cmd = `node -e "const m = require('${cjs}'); process.exit(m.MarkEditor ? 0 : 1)"`;
     expect(() => execSync(cmd, { stdio: 'pipe' })).not.toThrow();
   });
 });

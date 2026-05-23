@@ -1,4 +1,4 @@
-# CLAUDE.md — Guia do projeto `markmd`
+# CLAUDE.md — Guia do projeto `markeditor`
 
 Guia para Claude Code trabalhar neste repositório. Para escopo completo de produto, ler `PRD.md` (fonte canônica). Para sistema de design (cores, tipografia, componentes, espaçamento), **ler e aplicar `DESIGN.md`** — fonte canônica visual para toda UI do playground, docs e componentes da lib.
 
@@ -6,7 +6,7 @@ Guia para Claude Code trabalhar neste repositório. Para escopo completo de prod
 
 ## 1. O que é o projeto
 
-`markmd` — componente React (`<MarkmdEditor />`) distribuído como pacote NPM. Editor Markdown configurável com Monaco Editor + pipeline `unified` (remark/rehype). Modo **toggle** entre `edit` e `preview` (sem split view, sem WYSIWYG na v1).
+`markeditor` — componente React (`<MarkEditor />`) distribuído como pacote NPM. Editor Markdown configurável com Monaco Editor + pipeline `unified` (remark/rehype). Modo **toggle** entre `edit` e `preview` (sem split view, sem WYSIWYG na v1).
 
 Stack-alvo: React 18+/19, TypeScript estrito, ESM+CJS dual build.
 
@@ -15,7 +15,7 @@ Stack-alvo: React 18+/19, TypeScript estrito, ESM+CJS dual build.
 ## 2. Layout do monorepo (pnpm workspaces)
 
 ```
-packages/markmd/        ◀── PACOTE NPM PUBLICADO (única coisa que vai pro registry)
+packages/markeditor/    ◀── PACOTE NPM PUBLICADO (única coisa que vai pro registry)
 apps/playground/        ◀── App Vite/React de teste e demo (private, NÃO publicado)
 apps/docs/              ◀── opcional: Storybook + Docusaurus
 examples/               snippets curtos lidos pelo README
@@ -24,27 +24,27 @@ examples/               snippets curtos lidos pelo README
 turbo.json              pipeline build/test/lint/typecheck
 ```
 
-Workspaces: `packages/*`, `apps/*`. Playground consome lib via `"markmd": "workspace:*"`.
+Workspaces: `packages/*`, `apps/*`. Playground consome lib via `"markeditor": "workspace:*"`.
 
 ---
 
-## 3. Estrutura interna de `packages/markmd/src/`
+## 3. Estrutura interna de `packages/markeditor/src/`
 
 ```
 index.ts            entry público — só re-exports
-MarkmdEditor.tsx    componente principal
+MarkEditor.tsx      componente principal
 components/         Editor, Preview, Toolbar, Dialogs, ModeToggle
 core/               pipeline, sanitize, EditorAPI, pluginManager, shortcutManager
 plugins/            builtin (gfm, math, mermaid, alerts, footnotes, emoji, mentions, wordCount, toc)
-themes/             light, dark, auto + tipo MarkmdTheme
+themes/             light, dark, auto + tipo MarkTheme
 hooks/              useDebounce, usePersistence, useShortcuts, etc.
 utils/              helpers de markdown, slug, debounce
 i18n/               strings en, pt-BR
-styles/             CSS bundlado (importável: 'markmd/styles')
-types.ts            tipos públicos (MarkmdEditorProps, EditorAPI, MarkmdPlugin, etc.)
+styles/             CSS bundlado (importável: 'markeditor/styles')
+types.ts            tipos públicos (MarkEditorProps, EditorAPI, MarkPlugin, etc.)
 ```
 
-Tests em `packages/markmd/tests/{unit,integration,type,fixtures}/`. E2E em `apps/playground/e2e/`.
+Tests em `packages/markeditor/tests/{unit,integration,type,fixtures}/`. E2E em `apps/playground/e2e/`.
 
 ---
 
@@ -56,7 +56,7 @@ Toda RF começa por teste falhando (Red → Green → Refactor). PR sem testes v
 
 ### 4.2 Nada de UI de demo no pacote publicado
 
-`packages/markmd` exporta **apenas** `<MarkmdEditor />`, hooks, tipos, plugins, CSS. Showcase, controles de demo, theme switcher, rotas — tudo vai em `apps/playground`. Não acoplar Tailwind ou React Router à lib.
+`packages/markeditor` exporta **apenas** `<MarkEditor />`, hooks, tipos, plugins, CSS. Showcase, controles de demo, theme switcher, rotas — tudo vai em `apps/playground`. Não acoplar Tailwind ou React Router à lib.
 
 ### 4.3 Segurança XSS
 
@@ -68,7 +68,7 @@ Monaco, KaTeX, Mermaid carregam em chunks separados. Bundle inicial sem Monaco d
 
 ### 4.5 Tree-shaking
 
-`sideEffects: ["**/*.css"]` no `package.json`. Plugins opt-in não devem entrar no bundle se não importados. Subpath exports (`markmd/plugins/emoji`) para imports granulares.
+`sideEffects: ["**/*.css"]` no `package.json`. Plugins opt-in não devem entrar no bundle se não importados. Subpath exports (`markeditor/plugins/emoji`) para imports granulares.
 
 ### 4.6 Pipeline unificado
 
@@ -95,11 +95,11 @@ Rodar da raiz (Turborepo orquestra):
 | `pnpm -r test`                                  | Roda testes (Vitest run)                 |
 | `pnpm -r typecheck`                             | `tsc --noEmit`                           |
 | `pnpm -r lint`                                  | ESLint `--max-warnings 0`                |
-| `pnpm --filter markmd build`                    | Builda só o pacote                       |
+| `pnpm --filter markeditor build`                | Builda só o pacote                       |
 | `pnpm --filter playground dev`                  | Sobe playground em dev                   |
 | `pnpm --filter playground exec playwright test` | E2E                                      |
 
-Pré-publish (em `packages/markmd`): `prepublishOnly` roda `build + test + typecheck + lint + publint + attw + size`.
+Pré-publish (em `packages/markeditor`): `prepublishOnly` roda `build + test + typecheck + lint + publint + attw + size`.
 
 ---
 
@@ -119,11 +119,11 @@ Pré-publish (em `packages/markmd`): `prepublishOnly` roda `build + test + typec
 
 Manter estável após v1.0 (SemVer estrito):
 
-- `MarkmdEditorProps` (ver PRD §8.1)
+- `MarkEditorProps` (ver PRD §8.1)
 - `EditorAPI` (ver PRD §5.5.3)
-- `MarkmdPlugin` (ver PRD §5.5.1)
-- `ToolbarButton`, `ToolbarConfig`, `KeyboardShortcut`, `MarkmdTheme`, `I18nMessages`
-- `MarkmdEditorRef` (API imperativa via `useRef`)
+- `MarkPlugin` (ver PRD §5.5.1)
+- `ToolbarButton`, `ToolbarConfig`, `KeyboardShortcut`, `MarkTheme`, `I18nMessages`
+- `MarkEditorRef` (API imperativa via `useRef`)
 
 Mudanças nesses contratos = **major version**. Type-tests (`tests/type/`) protegem contra regressão.
 
@@ -147,7 +147,7 @@ Se usuário pedir algo desta lista, sinalizar fora de escopo da v1 antes de impl
 
 ## 9. Publicação NPM — checklist de identidade
 
-- Nome: `markmd` · License: `MIT` · Versão via Changesets
+- Nome: `markeditor` · License: `MIT` · Versão via Changesets
 - `exports` map com subpaths (`.`, `./styles`, `./plugins`, `./plugins/*`, `./package.json`)
 - `peerDependencies`: React 18 || 19
 - Provenance: `npm publish --provenance` via GitHub Actions OIDC

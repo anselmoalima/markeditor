@@ -1,6 +1,6 @@
 ---
 name: task-04-memory
-description: Task-local execution context for task_04 — packages/markmd skeleton + tsup dual build
+description: Task-local execution context for task_04 — packages/markeditor skeleton + tsup dual build
 metadata:
   type: project
 ---
@@ -13,12 +13,12 @@ metadata:
 
 ## Objective Snapshot
 
-Create `packages/markmd` with Phase 0 skeleton:
-- `MarkmdEditor` forwardRef placeholder, `types.ts`, `index.ts`, `styles/index.css`, `plugins/index.ts`
+Create `packages/markeditor` with Phase 0 skeleton:
+- `MarkEditor` forwardRef placeholder, `types.ts`, `index.ts`, `styles/index.css`, `plugins/index.ts`
 - `tsup.config.ts` → dual ESM/CJS + `.d.ts` + `.d.cts` + CSS
 - `package.json` with correct exports map, sideEffects, peerDeps, engines, files
 - Vitest unit + integration tests pass
-- `pnpm --filter markmd build` produces complete `dist/`
+- `pnpm --filter markeditor build` produces complete `dist/`
 
 ## Decisions Made
 
@@ -38,18 +38,18 @@ Create `packages/markmd` with Phase 0 skeleton:
 
 ## Files / Surfaces
 
-- `packages/markmd/package.json`
-- `packages/markmd/tsconfig.json`
-- `packages/markmd/tsup.config.ts`
-- `packages/markmd/vitest.config.ts`
-- `packages/markmd/src/types.ts`
-- `packages/markmd/src/index.ts`
-- `packages/markmd/src/MarkmdEditor.tsx`
-- `packages/markmd/src/styles/index.css`
-- `packages/markmd/src/plugins/index.ts`
-- `packages/markmd/tests/setup.ts`
-- `packages/markmd/tests/unit/MarkmdEditor.test.tsx`
-- `packages/markmd/tests/integration/build.test.ts`
+- `packages/markeditor/package.json`
+- `packages/markeditor/tsconfig.json`
+- `packages/markeditor/tsup.config.ts`
+- `packages/markeditor/vitest.config.ts`
+- `packages/markeditor/src/types.ts`
+- `packages/markeditor/src/index.ts`
+- `packages/markeditor/src/MarkEditor.tsx`
+- `packages/markeditor/src/styles/index.css`
+- `packages/markeditor/src/plugins/index.ts`
+- `packages/markeditor/tests/setup.ts`
+- `packages/markeditor/tests/unit/MarkEditor.test.tsx`
+- `packages/markeditor/tests/integration/build.test.ts`
 
 ## Verification Evidence
 
@@ -62,4 +62,4 @@ Create `packages/markmd` with Phase 0 skeleton:
 
 ## Handoff
 
-Task complete. task_05 (Vitest config smoke unit + type tests) can now proceed — Vitest config already lives in `packages/markmd/vitest.config.ts`; task_05 may need to consolidate or extend it. Note that the `vitest.config.ts` uses the `projects` multi-project API.
+Task complete. task_05 (Vitest config smoke unit + type tests) can now proceed — Vitest config already lives in `packages/markeditor/vitest.config.ts`; task_05 may need to consolidate or extend it. Note that the `vitest.config.ts` uses the `projects` multi-project API.

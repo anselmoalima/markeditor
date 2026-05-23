@@ -10,8 +10,8 @@ Add size-limit, publint, and attw quality gates with unit + integration tests. A
 
 - `size-limit.json` filename is used (no dot prefix) because `size-limit --config size-limit.json` flag is used in the `size` script. The standard cosmiconfig discovery uses `.size-limit.json`; we bypass that with `--config`.
 - Bloat test uses a separate temp file `.size-limit-test-overflow.json` rather than temporarily replacing `size-limit.json`. This avoids a race condition where the unit test reads `size-limit.json` in a parallel vitest project while the integration test has overwritten it with a 1 B temp config.
-- `size-limit` and `@size-limit/preset-small-lib` installed in `packages/markmd` devDependencies (not root), since that's where the config and script live. Root delegates via turbo.
-- Root `pnpm publint` and `pnpm attw` scripts delegate to package with `pnpm --filter markmd <script>`.
+- `size-limit` and `@size-limit/preset-small-lib` installed in `packages/markeditor` devDependencies (not root), since that's where the config and script live. Root delegates via turbo.
+- Root `pnpm publint` and `pnpm attw` scripts delegate to package with `pnpm --filter markeditor <script>`.
 
 ## Learnings
 
@@ -21,11 +21,11 @@ Add size-limit, publint, and attw quality gates with unit + integration tests. A
 
 ## Files / Surfaces
 
-- `packages/markmd/size-limit.json` — created
-- `packages/markmd/package.json` — added `size` script, `size-limit` + `@size-limit/preset-small-lib` devDeps
+- `packages/markeditor/size-limit.json` — created
+- `packages/markeditor/package.json` — added `size` script, `size-limit` + `@size-limit/preset-small-lib` devDeps
 - `package.json` (root) — added `publint` and `attw` scripts
-- `packages/markmd/tests/unit/quality-gates.test.ts` — 9 unit tests (config shape + root scripts)
-- `packages/markmd/tests/integration/quality-gates.test.ts` — 4 integration tests (pnpm size/publint/attw pass; enforcement test)
+- `packages/markeditor/tests/unit/quality-gates.test.ts` — 9 unit tests (config shape + root scripts)
+- `packages/markeditor/tests/integration/quality-gates.test.ts` — 4 integration tests (pnpm size/publint/attw pass; enforcement test)
 
 ## Errors / Corrections
 

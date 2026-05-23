@@ -1,5 +1,5 @@
 {
-  "name": "markmd",
+  "name": "markeditor",
   "version": "0.0.9",
   "description": "Configurable React Markdown editor component with Monaco + unified pipeline",
   "type": "module",

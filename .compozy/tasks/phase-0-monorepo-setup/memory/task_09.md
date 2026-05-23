@@ -9,8 +9,8 @@ Initialize `@changesets/cli` at root, configure `.changeset/config.json` to igno
 ## Important Decisions
 
 - Used `pnpm changeset init` to generate files, then manually patched `access` and `ignore` fields.
-- Integration test for "changeset version isolation" runs `pnpm changeset version` in the real repo with a temp `.changeset/test-bump-task09.md` file, then reverts via `git checkout -- packages/markmd/package.json` in a `finally` block.
-- `packages/markmd/CHANGELOG.md` cleanup in finally: check `git ls-files --error-unmatch` to distinguish new vs tracked file, then rm or git checkout accordingly.
+- Integration test for "changeset version isolation" runs `pnpm changeset version` in the real repo with a temp `.changeset/test-bump-task09.md` file, then reverts via `git checkout -- packages/markeditor/package.json` in a `finally` block.
+- `packages/markeditor/CHANGELOG.md` cleanup in finally: check `git ls-files --error-unmatch` to distinguish new vs tracked file, then rm or git checkout accordingly.
 - Tests placed in `tests/changeset.test.mjs` (root-level `node:test` pattern, matching config.test.mjs + lint.test.mjs).
 - `test:config` script extended to include `tests/changeset.test.mjs`.
 

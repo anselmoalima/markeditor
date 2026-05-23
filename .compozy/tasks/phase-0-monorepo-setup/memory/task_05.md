@@ -4,7 +4,7 @@ Keep only task-local execution context here. Do not duplicate facts that are obv
 
 ## Objective Snapshot
 
-Wire Vitest (jsdom + v8) + smoke unit tests + type-level tests into `packages/markmd`. Establish TDD loop and public-API regression guard.
+Wire Vitest (jsdom + v8) + smoke unit tests + type-level tests into `packages/markeditor`. Establish TDD loop and public-API regression guard.
 
 ## Important Decisions
 
@@ -15,18 +15,18 @@ Wire Vitest (jsdom + v8) + smoke unit tests + type-level tests into `packages/ma
 
 ## Learnings
 
-- `pnpm --filter markmd test --run` fails (pnpm treats `--run` as its own flag). Use `pnpm test` from within the package directory instead.
+- `pnpm --filter markeditor test --run` fails (pnpm treats `--run` as its own flag). Use `pnpm test` from within the package directory instead.
 - `expect-type` package and Vitest's built-in `expectTypeOf` share the same API (`.toEqualTypeOf`, `.toMatchTypeOf`) — they're compatible by design.
 
 ## Files / Surfaces
 
-- `packages/markmd/vitest.config.ts` — added `coverage.exclude`
-- `packages/markmd/package.json` — added `expect-type@1.3.0` devDep, `test:coverage` and `typecheck:types-test` scripts
-- `packages/markmd/tests/unit/MarkmdEditor.test.tsx` — added style prop test (now 8 tests)
-- `packages/markmd/tests/type/props.test-d.ts` — created (new)
-- `packages/markmd/tsconfig.types-test.json` — created (new)
+- `packages/markeditor/vitest.config.ts` — added `coverage.exclude`
+- `packages/markeditor/package.json` — added `expect-type@1.3.0` devDep, `test:coverage` and `typecheck:types-test` scripts
+- `packages/markeditor/tests/unit/MarkEditor.test.tsx` — added style prop test (now 8 tests)
+- `packages/markeditor/tests/type/props.test-d.ts` — created (new)
+- `packages/markeditor/tsconfig.types-test.json` — created (new)
 - `turbo.json` — added `typecheck:types-test` task
-- `packages/markmd/coverage/` — generated with coverage-final.json
+- `packages/markeditor/coverage/` — generated with coverage-final.json
 
 ## Errors / Corrections
 

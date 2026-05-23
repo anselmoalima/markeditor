@@ -13,7 +13,7 @@ Author `.github/workflows/ci.yml` — matrix Node 18/20/22 × React 18/19, order
 - **Corepack approach**: `corepack enable` runs after `setup-node`, then `pnpm store path --silent` is called to get store path for manual cache step (not using `setup-node cache: pnpm` since corepack must run first).
 - **YAML parsing in tests**: added `js-yaml@4.1.1` as root devDep — no built-in YAML parser in Node 18+; Python3 PyYAML not guaranteed.
 - **fail-fast: false** on matrix — all cells run so all failure modes are visible; individual steps still fail fast (GH Actions default).
-- **`pnpm -r test -- --coverage`**: passes `--coverage` to vitest in each workspace. Both markmd and playground generate coverage.
+- **`pnpm -r test -- --coverage`**: passes `--coverage` to vitest in each workspace. Both markeditor and playground generate coverage.
 - **Codecov OIDC**: uses `token: ${{ secrets.CODECOV_TOKEN }}` — codecov-action@v4 auto-selects OIDC when available, falls back to token.
 - **Job summary**: `if: always()` step writes to `$GITHUB_STEP_SUMMARY` for Markdown PR comment (built-in checks approach).
 

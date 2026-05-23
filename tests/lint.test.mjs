@@ -177,7 +177,7 @@ test('eslint exits 0 on clean fixture', () => {
 // ─── Integration tests: lint-staged behavior ─────────────────────────────────
 
 test('prettier --write rewrites badly-formatted TS file', () => {
-  const tmpDir = mkdtempSync(join(tmpdir(), 'markmd-fmt-'));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'markeditor-fmt-'));
   try {
     const bad = 'const x = "hello"\n';
     const filePath = join(tmpDir, 'test.ts');
@@ -195,7 +195,7 @@ test('prettier --write rewrites badly-formatted TS file', () => {
 });
 
 test('eslint --fix rewrites fixable violation in TS file', () => {
-  const tmpDir = mkdtempSync(join(tmpdir(), 'markmd-fix-'));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'markeditor-fix-'));
   try {
     // double-quoted string is fixable by prettier; use a fixable ESLint rule
     const fixable = `export const x = 'hello';\n\n\n\n`;
@@ -216,7 +216,7 @@ test('eslint --fix rewrites fixable violation in TS file', () => {
 });
 
 test('eslint exits non-zero on unfixable lint error in TS content', () => {
-  const tmpDir = mkdtempSync(join(tmpdir(), 'markmd-lint-'));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'markeditor-lint-'));
   try {
     // Write a TS file with unfixable error (unused var cannot be auto-fixed)
     const bad = `const leak = 'value';\n`;

@@ -11,7 +11,7 @@ dependencies:
 
 ## Overview
 
-Add Playwright to `apps/playground` with a single smoke e2e test that drives the production build (via `webServer: pnpm preview`) and asserts the `<MarkmdEditor />` mounts cleanly. Wire `@axe-core/playwright` into the same test to assert zero serious/critical a11y violations. This is the cross-browser proof that the published library actually loads in a real DOM.
+Add Playwright to `apps/playground` with a single smoke e2e test that drives the production build (via `webServer: pnpm preview`) and asserts the `<MarkEditor />` mounts cleanly. Wire `@axe-core/playwright` into the same test to assert zero serious/critical a11y violations. This is the cross-browser proof that the published library actually loads in a real DOM.
 
 <critical>
 - ALWAYS READ the PRD and TechSpec before starting
@@ -24,7 +24,7 @@ Add Playwright to `apps/playground` with a single smoke e2e test that drives the
 <requirements>
 - `apps/playground/playwright.config.ts` MUST configure `webServer` that runs `pnpm --filter playground preview` and waits for the port to open.
 - Browser projects MUST include at least Chromium; Firefox and WebKit recommended (gated by CI cost in task_10).
-- `e2e/smoke.spec.ts` MUST navigate to `/`, wait for `[data-testid="markmd-editor"]` to be visible, and assert no `console.error` was emitted during the page lifecycle.
+- `e2e/smoke.spec.ts` MUST navigate to `/`, wait for `[data-testid="mark-editor"]` to be visible, and assert no `console.error` was emitted during the page lifecycle.
 - `e2e/smoke.spec.ts` MUST run `AxeBuilder.analyze()` and fail on any `serious` or `critical` WCAG 2.1 AA violation.
 - `pnpm --filter playground e2e` MUST run the suite headlessly and exit 0 on a clean build.
 - Playwright browsers MUST be installable via `pnpm exec playwright install --with-deps chromium` and the CI step (added in task_10) MUST cache them.
@@ -72,7 +72,7 @@ Reference TechSpec sections "Testing Approach → E2E Tests" and ADR-003. Use `w
   - [ ] `e2e/smoke.spec.ts` parses and contains exactly one `test()` block named `"mounts editor with no a11y violations"` (or equivalent).
 - Integration tests:
   - [ ] Running `pnpm --filter playground e2e` against the built playground exits 0.
-  - [ ] Suite asserts `[data-testid="markmd-editor"]` is visible within 5s.
+  - [ ] Suite asserts `[data-testid="mark-editor"]` is visible within 5s.
   - [ ] `AxeBuilder.analyze()` returns zero violations at `serious` or `critical` impact for the rendered page.
   - [ ] Negative test (separate spec or temp fixture): inject a `console.error` from the page and confirm the smoke test fails — then revert.
 - Test coverage target: >=80% (e2e covers >=1 critical user flow: mount)

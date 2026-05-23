@@ -7,7 +7,7 @@
 | 01 | Repo skeleton + pnpm workspaces | completed | low | — |
 | 02 | tsconfig.base + Turborepo pipeline | completed | low | task_01 |
 | 03 | ESLint flat v9 + Prettier + Husky/lint-staged | completed | medium | task_02 |
-| 04 | packages/markmd skeleton + tsup dual build | completed | medium | task_02 |
+| 04 | packages/markeditor skeleton + tsup dual build | completed | medium | task_02 |
 | 05 | Vitest config + smoke unit + type tests | completed | medium | task_04 |
 | 06 | size-limit + publint + attw quality gates | completed | low | task_04 |
 | 07 | apps/playground Vite skeleton consuming workspace lib | completed | medium | task_04 |

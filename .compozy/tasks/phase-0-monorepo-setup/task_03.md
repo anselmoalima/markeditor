@@ -53,7 +53,7 @@ Reference TechSpec "Build Order steps 4–5" and ADR-005. Keep ESLint config fla
 
 ### Dependent Files
 
-- Every `.ts`/`.tsx` file in `packages/markmd` and `apps/playground` (tasks 04, 07) must pass lint.
+- Every `.ts`/`.tsx` file in `packages/markeditor` and `apps/playground` (tasks 04, 07) must pass lint.
 - `ci.yml` (task_10) runs `pnpm lint` as a gate.
 
 ### Related ADRs

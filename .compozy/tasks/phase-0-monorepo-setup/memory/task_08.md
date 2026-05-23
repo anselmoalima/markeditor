@@ -13,7 +13,7 @@ Keep only task-local execution context here. Do not duplicate facts that are obv
 
 Add Playwright to `apps/playground` with:
 - `playwright.config.ts` — webServer (`pnpm --filter playground preview`, port 4173), reuseExistingServer, chromium + firefox + webkit projects
-- `e2e/smoke.spec.ts` — mount check (`[data-testid="markmd-editor"]`), console.error guard, Axe analyze (zero serious/critical)
+- `e2e/smoke.spec.ts` — mount check (`[data-testid="mark-editor"]`), console.error guard, Axe analyze (zero serious/critical)
 - `package.json` — add `e2e` script + `@playwright/test` + `@axe-core/playwright` devDeps
 - `turbo.json` — ensure e2e depends on playground build
 - CONTRIBUTING.md stub — browser install prerequisite
@@ -22,7 +22,7 @@ Key constraints:
 - webServer runs preview (production build), NOT dev server
 - reuseExistingServer: !process.env.CI (fast local re-runs)
 - Axe: WCAG 2.1 AA, fail on serious + critical only
-- MarkmdEditor already has `data-testid="markmd-editor"` on the root div
+- MarkEditor already has `data-testid="mark-editor"` on the root div
 
 ## Important Decisions
 

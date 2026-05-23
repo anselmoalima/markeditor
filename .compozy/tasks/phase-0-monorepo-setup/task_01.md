@@ -40,7 +40,7 @@ Bootstrap the empty repo into a pnpm-workspace monorepo with the root files ever
 
 ## Implementation Details
 
-Reference TechSpec sections "System Architecture → Component Overview" and "Build Order step 1". Root `package.json` exports map and library-specific fields belong in `packages/markmd` (task_04), not here. The root must remain minimal — no library dependencies, only dev tooling shared across workspaces in later tasks.
+Reference TechSpec sections "System Architecture → Component Overview" and "Build Order step 1". Root `package.json` exports map and library-specific fields belong in `packages/markeditor` (task_04), not here. The root must remain minimal — no library dependencies, only dev tooling shared across workspaces in later tasks.
 
 ### Relevant Files
 
@@ -50,7 +50,7 @@ Reference TechSpec sections "System Architecture → Component Overview" and "Bu
 
 ### Dependent Files
 
-- Every later workspace (`packages/markmd`, `apps/playground`) depends on workspace discovery working.
+- Every later workspace (`packages/markeditor`, `apps/playground`) depends on workspace discovery working.
 - `turbo.json` (task_02), `eslint.config.js` (task_03), GH Actions workflows (task_10/11) all assume Corepack-provisioned pnpm.
 
 ### Related ADRs

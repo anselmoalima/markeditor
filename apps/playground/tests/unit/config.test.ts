@@ -22,8 +22,8 @@ describe('package.json', () => {
     expect(pkg.private).toBe(true);
   });
 
-  it('declares markmd as workspace dependency', () => {
-    expect(pkg.dependencies?.markmd).toBe('workspace:*');
+  it('declares markeditor as workspace dependency', () => {
+    expect(pkg.dependencies?.markeditor).toBe('workspace:*');
   });
 
   it('has type module', () => {
@@ -32,7 +32,7 @@ describe('package.json', () => {
 });
 
 describe('App.tsx', () => {
-  it('imports markmd/styles', () => {
-    expect(appSource).toMatch(/import ['"]markmd\/styles['"]/);
+  it('imports markeditor/styles', () => {
+    expect(appSource).toMatch(/import ['"]markeditor\/styles['"]/);
   });
 });

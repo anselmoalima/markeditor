@@ -49,7 +49,7 @@ Reference TechSpec "Build Order steps 2–3" and ADR-001. `outputs` per pipeline
 
 ### Dependent Files
 
-- `packages/markmd/tsconfig.json` (task_04) extends base.
+- `packages/markeditor/tsconfig.json` (task_04) extends base.
 - `apps/playground/tsconfig.json` (task_07) extends base.
 - `ci.yml` (task_10) calls root scripts.
 

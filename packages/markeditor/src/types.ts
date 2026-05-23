@@ -1,21 +1,21 @@
 import type { CSSProperties, ReactNode } from 'react';
 
-export type MarkmdMode = 'edit' | 'preview';
+export type MarkMode = 'edit' | 'preview';
 
-export interface MarkmdEditorProps {
+export interface MarkEditorProps {
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
-  mode?: MarkmdMode;
-  defaultMode?: MarkmdMode;
-  onModeChange?: (mode: MarkmdMode) => void;
+  mode?: MarkMode;
+  defaultMode?: MarkMode;
+  onModeChange?: (mode: MarkMode) => void;
   height?: number | string;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
 }
 
-export interface MarkmdEditorRef {
+export interface MarkEditorRef {
   getValue(): string;
   setValue(next: string): void;
   focus(): void;

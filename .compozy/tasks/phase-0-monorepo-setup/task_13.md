@@ -23,8 +23,8 @@ Write the root `README.md` with project pitch + badges (npm, CI, coverage, bundl
 </critical>
 
 <requirements>
-- Root `README.md` MUST include: badges (npm version, CI status, Codecov coverage, bundlephobia size, license MIT), one-paragraph pitch, install snippet (`pnpm add markmd`), minimal usage snippet (mount `<MarkmdEditor />` + `import 'markmd/styles'`), link to playground (placeholder URL until task_6.5 Vercel deploy), link to PRD and DESIGN docs, license footer.
-- `packages/markmd/README.md` MUST mirror the root README content but be NPM-focused (the published tarball ships this file).
+- Root `README.md` MUST include: badges (npm version, CI status, Codecov coverage, bundlephobia size, license MIT), one-paragraph pitch, install snippet (`pnpm add markeditor`), minimal usage snippet (mount `<MarkEditor />` + `import 'markeditor/styles'`), link to playground (placeholder URL until task_6.5 Vercel deploy), link to PRD and DESIGN docs, license footer.
+- `packages/markeditor/README.md` MUST mirror the root README content but be NPM-focused (the published tarball ships this file).
 - `CONTRIBUTING.md` MUST document: prerequisites (Node ≥ 18.18, Corepack), common commands (`pnpm install`, `pnpm test`, `pnpm lint`, `pnpm build`, `pnpm changeset`), TDD policy reference (CLAUDE.md §4.1), Changesets workflow, branch protection requirements, release procedure with OIDC trust setup.
 - All badge URLs MUST resolve to real targets (CI workflow, Codecov project, npm package).
 - `CONTRIBUTING.md` MUST NOT reference any external system the project does not actually use.
@@ -33,7 +33,7 @@ Write the root `README.md` with project pitch + badges (npm, CI, coverage, bundl
 ## Subtasks
 
 - [ ] 13.1 Author root `README.md` with badges + pitch + install/usage + links.
-- [ ] 13.2 Author `packages/markmd/README.md` (NPM-facing variant).
+- [ ] 13.2 Author `packages/markeditor/README.md` (NPM-facing variant).
 - [ ] 13.3 Author `CONTRIBUTING.md` covering setup, commands, TDD, Changesets, release.
 - [ ] 13.4 Verify every badge URL renders correctly.
 - [ ] 13.5 Cross-link `README.md` ↔ `CONTRIBUTING.md` ↔ `PRD.md` ↔ `DESIGN.md` ↔ `CLAUDE.md`.
@@ -45,7 +45,7 @@ Reference TechSpec section "Monitoring and Observability" (badge inventory) and 
 ### Relevant Files
 
 - `README.md` (root) — project entry point.
-- `packages/markmd/README.md` — NPM tarball entry.
+- `packages/markeditor/README.md` — NPM tarball entry.
 - `CONTRIBUTING.md` — dev workflow.
 
 ### Dependent Files
@@ -60,7 +60,7 @@ Reference TechSpec section "Monitoring and Observability" (badge inventory) and 
 
 ## Deliverables
 
-- `README.md`, `packages/markmd/README.md`, `CONTRIBUTING.md` committed.
+- `README.md`, `packages/markeditor/README.md`, `CONTRIBUTING.md` committed.
 - All badges resolve.
 - Unit tests asserting required content present **(REQUIRED)**.
 - Integration test: links validated by a Markdown link-check tool **(REQUIRED)**.
@@ -68,14 +68,14 @@ Reference TechSpec section "Monitoring and Observability" (badge inventory) and 
 ## Tests
 
 - Unit tests:
-  - [ ] Root `README.md` contains an `## Install` section with the literal `pnpm add markmd` snippet.
+  - [ ] Root `README.md` contains an `## Install` section with the literal `pnpm add markeditor` snippet.
   - [ ] Root `README.md` contains badge image references for npm version, CI, Codecov, bundlephobia, license.
-  - [ ] `packages/markmd/README.md` contains a usage snippet importing `MarkmdEditor` and `markmd/styles`.
+  - [ ] `packages/markeditor/README.md` contains a usage snippet importing `MarkEditor` and `markeditor/styles`.
   - [ ] `CONTRIBUTING.md` contains sections `Setup`, `Common Commands`, `Tests`, `Changesets`, `Release`.
 - Integration tests:
-  - [ ] `pnpm exec markdown-link-check README.md CONTRIBUTING.md packages/markmd/README.md` exits 0 (all links resolve).
+  - [ ] `pnpm exec markdown-link-check README.md CONTRIBUTING.md packages/markeditor/README.md` exits 0 (all links resolve).
   - [ ] Every badge image URL responds 200 (asserted by `curl -fI` script in CI).
-  - [ ] `npm view markmd readme` (post any future publish) includes the `packages/markmd/README.md` content.
+  - [ ] `npm view markeditor readme` (post any future publish) includes the `packages/markeditor/README.md` content.
 - Test coverage target: >=80% (markdown coverage via lint + link-check)
 - All tests must pass
 

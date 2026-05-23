@@ -44,16 +44,16 @@ describe('Unit: prerelease mode exited cleanly', () => {
 // ─── Unit: package version clean ─────────────────────────────────────────────
 
 describe('Unit: package version clean after simulation', () => {
-  test('packages/markmd/package.json version does NOT contain -test', () => {
-    const pkg = readJSON('packages/markmd/package.json');
+  test('packages/markeditor/package.json version does NOT contain -test', () => {
+    const pkg = readJSON('packages/markeditor/package.json');
     assert.ok(
       !pkg.version.includes('-test'),
-      `packages/markmd/package.json version must not contain "-test" after task. Got: "${pkg.version}"`,
+      `packages/markeditor/package.json version must not contain "-test" after task. Got: "${pkg.version}"`,
     );
   });
 
-  test('packages/markmd/package.json version is a valid semver string', () => {
-    const pkg = readJSON('packages/markmd/package.json');
+  test('packages/markeditor/package.json version is a valid semver string', () => {
+    const pkg = readJSON('packages/markeditor/package.json');
     assert.match(
       pkg.version,
       /^\d+\.\d+\.\d+(-[\w.]+)*(\+[\w.]+)*$/,
@@ -165,10 +165,10 @@ describe('Unit: changeset pre enter/exit cycle', () => {
     assert.ok(!existsSync(preJson), 'pre.json must be absent (exit cycle completed)');
   });
 
-  test('markmd version has no prerelease suffix after simulation', () => {
-    const pkg = readJSON('packages/markmd/package.json');
+  test('markeditor version has no prerelease suffix after simulation', () => {
+    const pkg = readJSON('packages/markeditor/package.json');
     const hasPrerelease = /-(alpha|beta|rc|test|next|canary)/.test(pkg.version);
-    assert.ok(!hasPrerelease, `markmd version must not have prerelease suffix. Got: ${pkg.version}`);
+    assert.ok(!hasPrerelease, `markeditor version must not have prerelease suffix. Got: ${pkg.version}`);
   });
 });
 
@@ -183,11 +183,11 @@ describe('Integration: npm verification (skipped — requires npm access)', () =
   const npmAccessAvailable = npmAuthCheck.status === 0;
 
   const skipReason = npmAccessAvailable
-    ? 'npm authenticated but markmd package owned by banyawat@gmail.com — cannot publish to it'
+    ? 'npm authenticated but markeditor package owned by banyawat@gmail.com — cannot publish to it'
     : 'npm not authenticated (npm whoami → 401). Resolve blockers in release-smoke/BLOCKERS.md first';
 
-  test('npm view markmd@<test-version> has provenance metadata', { skip: skipReason }, async () => {
-    const result = spawnSync('npm', ['view', 'markmd@0.0.8-test.0', '--json'], {
+  test('npm view markeditor@<test-version> has provenance metadata', { skip: skipReason }, async () => {
+    const result = spawnSync('npm', ['view', 'markeditor@0.0.8-test.0', '--json'], {
       encoding: 'utf-8',
       timeout: 15000,
     });
@@ -199,8 +199,8 @@ describe('Integration: npm verification (skipped — requires npm access)', () =
     assert.ok(hasProvenance, 'npm view output must contain provenance attestation metadata');
   });
 
-  test('npm view markmd@<test-version> shows deprecated message', { skip: skipReason }, async () => {
-    const result = spawnSync('npm', ['view', 'markmd@0.0.8-test.0', '--json'], {
+  test('npm view markeditor@<test-version> shows deprecated message', { skip: skipReason }, async () => {
+    const result = spawnSync('npm', ['view', 'markeditor@0.0.8-test.0', '--json'], {
       encoding: 'utf-8',
       timeout: 15000,
     });
@@ -212,8 +212,8 @@ describe('Integration: npm verification (skipped — requires npm access)', () =
     );
   });
 
-  test('npm view markmd@latest does NOT resolve to the test version', { skip: skipReason }, async () => {
-    const result = spawnSync('npm', ['view', 'markmd@latest', '--json'], {
+  test('npm view markeditor@latest does NOT resolve to the test version', { skip: skipReason }, async () => {
+    const result = spawnSync('npm', ['view', 'markeditor@latest', '--json'], {
       encoding: 'utf-8',
       timeout: 15000,
     });

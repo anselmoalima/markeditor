@@ -47,15 +47,15 @@ export default tseslint.config(
     rules: {},
   },
 
-  // packages/markmd override: switch to explicit project so test files are included.
-  // packages/markmd/tsconfig.json excludes tests/ (correct for publishing), so we
+  // packages/markeditor override: switch to explicit project so test files are included.
+  // packages/markeditor/tsconfig.json excludes tests/ (correct for publishing), so we
   // use tsconfig.eslint.json which re-includes tests for type-aware linting.
   {
-    files: ['packages/markmd/**/*.ts', 'packages/markmd/**/*.tsx'],
+    files: ['packages/markeditor/**/*.ts', 'packages/markeditor/**/*.tsx'],
     languageOptions: {
       parserOptions: {
         projectService: false,
-        project: './packages/markmd/tsconfig.eslint.json',
+        project: './packages/markeditor/tsconfig.eslint.json',
         tsconfigRootDir: import.meta.dirname,
       },
     },

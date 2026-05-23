@@ -70,11 +70,11 @@ describe('playground preview', () => {
 });
 
 describe('workspace resolution', () => {
-  it('markmd resolves to monorepo workspace package', () => {
+  it('markeditor resolves to monorepo workspace package', () => {
     const result = execSync(
-      `node -e "console.log(require.resolve('markmd', { paths: ['${playgroundDir}'] }))"`,
+      `node -e "console.log(require.resolve('markeditor', { paths: ['${playgroundDir}'] }))"`,
       { cwd: repoRoot, encoding: 'utf8', stdio: 'pipe' },
     ).trim();
-    expect(result).toContain('packages/markmd');
+    expect(result).toContain('packages/markeditor');
   });
 });

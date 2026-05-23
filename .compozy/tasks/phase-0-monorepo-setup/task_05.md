@@ -11,7 +11,7 @@ dependencies:
 
 ## Overview
 
-Wire Vitest (jsdom + v8 coverage) into `packages/markmd`, add the smoke unit test for the `MarkmdEditor` placeholder, and add the type-level test that pins the public API shape (`MarkmdEditorProps`, `MarkmdEditorRef`, `MarkmdMode`). This establishes the TDD loop and the public-API regression guard from day one.
+Wire Vitest (jsdom + v8 coverage) into `packages/markeditor`, add the smoke unit test for the `MarkEditor` placeholder, and add the type-level test that pins the public API shape (`MarkEditorProps`, `MarkEditorRef`, `MarkMode`). This establishes the TDD loop and the public-API regression guard from day one.
 
 <critical>
 - ALWAYS READ the PRD and TechSpec before starting
@@ -25,18 +25,18 @@ Wire Vitest (jsdom + v8 coverage) into `packages/markmd`, add the smoke unit tes
 - `vitest.config.ts` MUST set `environment: 'jsdom'`, `coverage.provider: 'v8'`, `coverage.thresholds: { lines: 80, branches: 75, functions: 80, statements: 80 }`.
 - `coverage.include` MUST be scoped to `src/**` and exclude `src/styles/**`, `src/**/index.ts` re-exports, and test fixtures.
 - A `tests/setup.ts` MUST import `@testing-library/jest-dom`.
-- Type-level tests MUST use `expect-type` against `MarkmdEditorProps`, `MarkmdEditorRef`, `MarkmdMode`.
-- Smoke unit test MUST render `<MarkmdEditor />` via `@testing-library/react` and assert presence of `data-testid="markmd-editor"`.
-- `pnpm --filter markmd test --run` MUST exit 0 with coverage report generated under `coverage/`.
+- Type-level tests MUST use `expect-type` against `MarkEditorProps`, `MarkEditorRef`, `MarkMode`.
+- Smoke unit test MUST render `<MarkEditor />` via `@testing-library/react` and assert presence of `data-testid="mark-editor"`.
+- `pnpm --filter markeditor test --run` MUST exit 0 with coverage report generated under `coverage/`.
 </requirements>
 
 ## Subtasks
 
-- [x] 5.1 Install Vitest, @testing-library/react, @testing-library/jest-dom, jsdom, @vitest/coverage-v8, expect-type as workspace devDeps in `packages/markmd`.
-- [x] 5.2 Add `packages/markmd/vitest.config.ts` and `tests/setup.ts`.
-- [x] 5.3 Add `tests/unit/MarkmdEditor.test.tsx` smoke test.
+- [x] 5.1 Install Vitest, @testing-library/react, @testing-library/jest-dom, jsdom, @vitest/coverage-v8, expect-type as workspace devDeps in `packages/markeditor`.
+- [x] 5.2 Add `packages/markeditor/vitest.config.ts` and `tests/setup.ts`.
+- [x] 5.3 Add `tests/unit/MarkEditor.test.tsx` smoke test.
 - [x] 5.4 Add `tests/type/props.test-d.ts` and a separate `tsconfig.types-test.json` invoked by `pnpm typecheck:types-test`.
-- [x] 5.5 Wire `packages/markmd/package.json` scripts `test`, `test:watch`, `test:coverage`, `typecheck`, `typecheck:types-test` into Turbo.
+- [x] 5.5 Wire `packages/markeditor/package.json` scripts `test`, `test:watch`, `test:coverage`, `typecheck`, `typecheck:types-test` into Turbo.
 
 ## Implementation Details
 
@@ -44,15 +44,15 @@ Reference TechSpec sections "Testing Approach → Unit Tests" and "Integration T
 
 ### Relevant Files
 
-- `packages/markmd/vitest.config.ts` — main runner config.
-- `packages/markmd/tests/setup.ts` — jest-dom import.
-- `packages/markmd/tests/unit/MarkmdEditor.test.tsx` — smoke render test.
-- `packages/markmd/tests/type/props.test-d.ts` — type-level assertions.
-- `packages/markmd/tsconfig.types-test.json` — strict typecheck for `.test-d.ts` files.
+- `packages/markeditor/vitest.config.ts` — main runner config.
+- `packages/markeditor/tests/setup.ts` — jest-dom import.
+- `packages/markeditor/tests/unit/MarkEditor.test.tsx` — smoke render test.
+- `packages/markeditor/tests/type/props.test-d.ts` — type-level assertions.
+- `packages/markeditor/tsconfig.types-test.json` — strict typecheck for `.test-d.ts` files.
 
 ### Dependent Files
 
-- `packages/markmd/src/MarkmdEditor.tsx`, `src/types.ts`, `src/index.ts` — under test.
+- `packages/markeditor/src/MarkEditor.tsx`, `src/types.ts`, `src/index.ts` — under test.
 - `ci.yml` (task_10) runs `pnpm -r test` and uploads coverage.
 
 ### Related ADRs
@@ -62,23 +62,23 @@ Reference TechSpec sections "Testing Approach → Unit Tests" and "Integration T
 ## Deliverables
 
 - Vitest config + setup file + smoke unit test + type-level test.
-- Updated `packages/markmd/package.json` test scripts.
-- Coverage report generated at `packages/markmd/coverage/`.
+- Updated `packages/markeditor/package.json` test scripts.
+- Coverage report generated at `packages/markeditor/coverage/`.
 - Unit tests with 80%+ coverage **(REQUIRED)**.
 - Integration tests for type-level API stability **(REQUIRED)**.
 
 ## Tests
 
 - Unit tests:
-  - [x] `<MarkmdEditor />` renders an element with `data-testid="markmd-editor"`.
-  - [x] `<MarkmdEditor className="foo" />` applies the className to the rendered element.
-  - [x] `<MarkmdEditor style={{ height: 100 }} />` applies the inline style.
+  - [x] `<MarkEditor />` renders an element with `data-testid="mark-editor"`.
+  - [x] `<MarkEditor className="foo" />` applies the className to the rendered element.
+  - [x] `<MarkEditor style={{ height: 100 }} />` applies the inline style.
   - [x] Ref forwarding: `ref.current.getValue()` returns `""` for an editor mounted with no `defaultValue`.
   - [x] Ref forwarding: `ref.current.setValue("x"); ref.current.getValue()` returns `"x"`.
 - Integration tests:
-  - [x] Type-level: `expectTypeOf<MarkmdEditorProps>().toMatchTypeOf<{ value?: string; mode?: 'edit' | 'preview' }>()` compiles.
-  - [x] Type-level: removing `MarkmdMode` from the union or renaming `MarkmdEditorRef.getValue` fails `tsc --noEmit` on `tsconfig.types-test.json`.
-  - [x] `pnpm --filter markmd test:coverage` generates `coverage/coverage-final.json` and meets thresholds.
+  - [x] Type-level: `expectTypeOf<MarkEditorProps>().toMatchTypeOf<{ value?: string; mode?: 'edit' | 'preview' }>()` compiles.
+  - [x] Type-level: removing `MarkMode` from the union or renaming `MarkEditorRef.getValue` fails `tsc --noEmit` on `tsconfig.types-test.json`.
+  - [x] `pnpm --filter markeditor test:coverage` generates `coverage/coverage-final.json` and meets thresholds.
 - Test coverage target: >=80%
 - All tests must pass
 

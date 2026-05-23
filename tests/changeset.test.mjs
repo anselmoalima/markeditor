@@ -115,19 +115,19 @@ describe('changeset status', () => {
   });
 });
 
-// ─── Integration: changeset version bumps markmd only ────────────────────────
+// ─── Integration: changeset version bumps markeditor only ────────────────────────
 
 describe('changeset version isolation', () => {
   const tempChangeset = resolve(root, '.changeset/test-bump-task09.md');
-  const markmdPkg = resolve(root, 'packages/markmd/package.json');
+  const markeditorPkg = resolve(root, 'packages/markeditor/package.json');
   const playgroundPkg = resolve(root, 'apps/playground/package.json');
-  const markmdChangelog = resolve(root, 'packages/markmd/CHANGELOG.md');
+  const markeditorChangelog = resolve(root, 'packages/markeditor/CHANGELOG.md');
 
-  test('pnpm changeset version bumps markmd but not playground', () => {
-    const markmdBefore = readJSON('packages/markmd/package.json').version;
+  test('pnpm changeset version bumps markeditor but not playground', () => {
+    const markeditorBefore = readJSON('packages/markeditor/package.json').version;
     const playgroundBefore = readJSON('apps/playground/package.json').version;
 
-    writeFileSync(tempChangeset, `---\n"markmd": patch\n---\n\ntest: task_09 integration bump\n`);
+    writeFileSync(tempChangeset, `---\n"markeditor": patch\n---\n\ntest: task_09 integration bump\n`);
 
     let versionResult;
     try {
@@ -142,26 +142,26 @@ describe('changeset version isolation', () => {
         `changeset version must exit 0.\nstdout: ${versionResult.stdout}\nstderr: ${versionResult.stderr}`,
       );
 
-      const markmdAfter = readJSON('packages/markmd/package.json').version;
+      const markeditorAfter = readJSON('packages/markeditor/package.json').version;
       const playgroundAfter = readJSON('apps/playground/package.json').version;
 
-      assert.notEqual(markmdAfter, markmdBefore, 'markmd version must be bumped by changeset version');
+      assert.notEqual(markeditorAfter, markeditorBefore, 'markeditor version must be bumped by changeset version');
       assert.equal(playgroundAfter, playgroundBefore, 'playground version must NOT change');
     } finally {
-      // Restore packages/markmd/package.json
-      spawnSync('git', ['checkout', '--', 'packages/markmd/package.json'], { cwd: root });
+      // Restore packages/markeditor/package.json
+      spawnSync('git', ['checkout', '--', 'packages/markeditor/package.json'], { cwd: root });
 
-      // CHANGELOG.md is new if markmd had none before — remove it; restore if it was tracked
-      if (existsSync(markmdChangelog)) {
+      // CHANGELOG.md is new if markeditor had none before — remove it; restore if it was tracked
+      if (existsSync(markeditorChangelog)) {
         const tracked = spawnSync(
           'git',
-          ['ls-files', '--error-unmatch', 'packages/markmd/CHANGELOG.md'],
+          ['ls-files', '--error-unmatch', 'packages/markeditor/CHANGELOG.md'],
           { cwd: root, encoding: 'utf-8' },
         );
         if (tracked.status !== 0) {
-          rmSync(markmdChangelog, { force: true });
+          rmSync(markeditorChangelog, { force: true });
         } else {
-          spawnSync('git', ['checkout', '--', 'packages/markmd/CHANGELOG.md'], { cwd: root });
+          spawnSync('git', ['checkout', '--', 'packages/markeditor/CHANGELOG.md'], { cwd: root });
         }
       }
 

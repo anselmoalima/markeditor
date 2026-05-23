@@ -4,7 +4,7 @@ Keep only task-local execution context here. Do not duplicate facts that are obv
 
 ## Objective Snapshot
 
-Authored `size.yml` + `release.yml` GitHub Actions workflows and wired `prepublishOnly` in `packages/markmd/package.json`. All unit tests pass (40 tests in `tests/release.test.mjs`). Full config suite: 110 tests pass.
+Authored `size.yml` + `release.yml` GitHub Actions workflows and wired `prepublishOnly` in `packages/markeditor/package.json`. All unit tests pass (40 tests in `tests/release.test.mjs`). Full config suite: 110 tests pass.
 
 ## Important Decisions
 
@@ -17,14 +17,14 @@ Authored `size.yml` + `release.yml` GitHub Actions workflows and wired `prepubli
 ## Learnings
 
 - actionlint not installed locally — integration tests skip gracefully via `which actionlint` check. Validate in CI on first push.
-- `packages/markmd/package.json` had no `lint` script — added `"lint": "eslint . --max-warnings 0"` alongside `prepublishOnly` since `prepublishOnly` chains `pnpm run lint`.
+- `packages/markeditor/package.json` had no `lint` script — added `"lint": "eslint . --max-warnings 0"` alongside `prepublishOnly` since `prepublishOnly` chains `pnpm run lint`.
 - Test pattern: use `js-yaml` parse + `raw` string checks (same as ci.test.mjs). Step order tested via index comparison of parsed steps array.
 
 ## Files / Surfaces
 
 - `.github/workflows/size.yml` — created
 - `.github/workflows/release.yml` — created
-- `packages/markmd/package.json` — added `lint` + `prepublishOnly` scripts
+- `packages/markeditor/package.json` — added `lint` + `prepublishOnly` scripts
 - `tests/release.test.mjs` — created (40 tests)
 - `package.json` — `test:config` extended to include `tests/release.test.mjs`
 

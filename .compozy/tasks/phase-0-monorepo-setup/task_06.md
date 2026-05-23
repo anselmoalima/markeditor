@@ -22,18 +22,18 @@ Add the package-quality gates that protect the published bundle: `size-limit` en
 </critical>
 
 <requirements>
-- `packages/markmd/size-limit.json` MUST define limits aligned with PRD §6.1: initial bundle without Monaco <80KB gzip; with Monaco lazy <500KB gzip; per-plugin entrypoints <10KB gzip each.
+- `packages/markeditor/size-limit.json` MUST define limits aligned with PRD §6.1: initial bundle without Monaco <80KB gzip; with Monaco lazy <500KB gzip; per-plugin entrypoints <10KB gzip each.
 - `size-limit` MUST use `@size-limit/preset-small-lib`.
 - `pnpm size` MUST exit non-zero if any limit is exceeded.
-- `pnpm publint` MUST run `publint` against the built `packages/markmd` and exit non-zero on any error.
-- `pnpm attw` MUST run `attw --pack packages/markmd` and exit non-zero on resolution errors (ignore `FalseExportDefault` only if explicitly justified).
-- All three commands MUST be added to root scripts and to `packages/markmd/package.json` `prepublishOnly` chain (chain wired in task_11).
+- `pnpm publint` MUST run `publint` against the built `packages/markeditor` and exit non-zero on any error.
+- `pnpm attw` MUST run `attw --pack packages/markeditor` and exit non-zero on resolution errors (ignore `FalseExportDefault` only if explicitly justified).
+- All three commands MUST be added to root scripts and to `packages/markeditor/package.json` `prepublishOnly` chain (chain wired in task_11).
 </requirements>
 
 ## Subtasks
 
 - [x] 6.1 Install `size-limit`, `@size-limit/preset-small-lib`, `publint`, `@arethetypeswrong/cli` at the root.
-- [x] 6.2 Create `packages/markmd/size-limit.json` with Phase 0 limits.
+- [x] 6.2 Create `packages/markeditor/size-limit.json` with Phase 0 limits.
 - [x] 6.3 Add root scripts `size`, `publint`, `attw` delegating to the package.
 - [x] 6.4 Verify all three gates pass on the current `dist/` output.
 
@@ -43,12 +43,12 @@ Reference TechSpec section "Quality gates" and ADR-005. Phase 0 source is trivia
 
 ### Relevant Files
 
-- `packages/markmd/size-limit.json` — limits per entrypoint.
+- `packages/markeditor/size-limit.json` — limits per entrypoint.
 - `package.json` (root) — `size`, `publint`, `attw` scripts.
 
 ### Dependent Files
 
-- `packages/markmd/dist/*` (task_04 output) — measured by size-limit.
+- `packages/markeditor/dist/*` (task_04 output) — measured by size-limit.
 - `ci.yml` (task_10) runs all three gates.
 - `release.yml` / `prepublishOnly` (task_11) chains them before publish.
 
@@ -73,7 +73,7 @@ Reference TechSpec section "Quality gates" and ADR-005. Phase 0 source is trivia
 - Integration tests:
   - [x] `pnpm size` on built `dist/` exits 0 (placeholder is far below limits).
   - [x] `pnpm publint` on built `dist/` exits 0 with zero errors.
-  - [x] `pnpm attw --pack packages/markmd` exits 0 with no resolution errors for ESM, CJS, or types.
+  - [x] `pnpm attw --pack packages/markeditor` exits 0 with no resolution errors for ESM, CJS, or types.
   - [x] Artificially bloating `dist/index.mjs` to >80KB makes `pnpm size` exit non-zero (run via a temp fixture, then revert).
 - Test coverage target: >=80%
 - All tests must pass

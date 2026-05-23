@@ -66,11 +66,11 @@ describe('root package.json scripts', () => {
     expect(typeof pkg.scripts['attw']).toBe('string');
   });
 
-  it('"publint" script delegates to markmd package', () => {
-    expect(pkg.scripts['publint']).toContain('markmd');
+  it('"publint" script delegates to markeditor package', () => {
+    expect(pkg.scripts['publint']).toContain('markeditor');
   });
 
-  it('"attw" script delegates to markmd package', () => {
-    expect(pkg.scripts['attw']).toContain('markmd');
+  it('"attw" script delegates to markeditor package', () => {
+    expect(pkg.scripts['attw']).toContain('markeditor');
   });
 });

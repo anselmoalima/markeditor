@@ -1,10 +1,10 @@
-import 'markmd/styles';
-import { MarkmdEditor } from 'markmd';
+import 'markeditor/styles';
+import { MarkEditor } from 'markeditor';
 
 export default function App() {
   return (
     <main style={{ padding: '1rem' }}>
-      <MarkmdEditor style={{ display: 'block', minHeight: '400px' }} />
+      <MarkEditor style={{ display: 'block', minHeight: '400px' }} />
     </main>
   );
 }

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "markmd": "workspace:*",
+    "markeditor": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },

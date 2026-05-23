@@ -307,11 +307,11 @@ describe('release.yml caches pnpm store', () => {
   });
 });
 
-// ─── packages/markmd/package.json: prepublishOnly ────────────────────────────
+// ─── packages/markeditor/package.json: prepublishOnly ────────────────────────────
 
-describe('packages/markmd prepublishOnly', () => {
+describe('packages/markeditor prepublishOnly', () => {
   function loadPackageJson() {
-    const path = resolve(root, 'packages/markmd/package.json');
+    const path = resolve(root, 'packages/markeditor/package.json');
     return JSON.parse(readFileSync(path, 'utf-8'));
   }
 
@@ -319,7 +319,7 @@ describe('packages/markmd prepublishOnly', () => {
     const pkg = loadPackageJson();
     assert.ok(
       typeof pkg.scripts?.prepublishOnly === 'string' && pkg.scripts.prepublishOnly.length > 0,
-      'packages/markmd/package.json must have a non-empty prepublishOnly script',
+      'packages/markeditor/package.json must have a non-empty prepublishOnly script',
     );
   });
 
