@@ -1,0 +1,11 @@
+/* markmd — CSS custom properties; override to theme the editor */
+:root {
+  --mde-background: #ffffff;
+  --mde-foreground: #1a1a1a;
+  --mde-border: #e5e7eb;
+  --mde-font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  --mde-font-size: 14px;
+  --mde-line-height: 1.6;
+  --mde-radius: 6px;
+  --mde-padding: 12px;
+}

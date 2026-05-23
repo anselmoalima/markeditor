@@ -1,0 +1,60 @@
+{
+  "_status": "BLOCKED",
+  "_reason": "Real npm publish could not be completed. See BLOCKERS.md for details.",
+  "_simulation_version": "0.0.8-test.0",
+  "_blockers": [
+    "npm package name 'markmd' is owned by banyawat@gmail.com (not this project)",
+    "npm authentication not configured (npm whoami returns 401)",
+    "no GitHub remote configured to trigger release.yml via OIDC"
+  ],
+  "_local_simulation_completed": true,
+  "_simulation_steps": [
+    "pnpm changeset pre enter test → SUCCESS (pre.json created with mode:pre, tag:test)",
+    "created .changeset/smoke-test-release.md with patch bump for markmd",
+    "pnpm changeset version → SUCCESS (version bumped to 0.0.8-test.0)",
+    "pnpm changeset pre exit → SUCCESS (pre.json moved to mode:exit)",
+    "cleanup: removed pre.json, smoke-test-release.md, CHANGELOG.md, reset version to 0.0.7",
+    "verified: .changeset/pre.json does NOT exist",
+    "verified: packages/markmd/package.json version = 0.0.7 (no -test suffix)"
+  ],
+  "_what_real_publish_would_produce": {
+    "name": "markmd",
+    "version": "0.0.8-test.0",
+    "dist-tags": {
+      "test": "0.0.8-test.0",
+      "latest": "<would NOT be updated — separate dist-tag>"
+    },
+    "dist": {
+      "attestations": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/markmd@0.0.8-test.0",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1",
+          "predicate": {
+            "buildDefinition": {
+              "buildType": "https://slsa-framework.github.io/github-actions-buildtypes/workflow/v1",
+              "externalParameters": {
+                "workflow": {
+                  "ref": "refs/heads/main",
+                  "repository": "https://github.com/<owner>/markmd",
+                  "path": ".github/workflows/release.yml"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "_next_steps_to_complete_task": [
+    "1. Claim 'markmd' npm package name OR use scoped name '@<scope>/markmd'",
+    "2. Log in to npm: npm login",
+    "3. Configure NPM OIDC trust on npmjs.com for the GitHub repository (see CONTRIBUTING.md task_13)",
+    "4. Add GitHub remote: git remote add origin https://github.com/<owner>/markmd",
+    "5. Push code to GitHub main branch",
+    "6. Create a changeset: pnpm changeset pre enter test && create changeset && git commit && push",
+    "7. Merge the Version Packages PR created by release.yml",
+    "8. Verify: npm view markmd@0.0.8-test.0 --json (check for provenance field)",
+    "9. Deprecate: npm deprecate markmd@0.0.8-test.0 'test release - do not use'",
+    "10. Update this file with real npm view output"
+  ]
+}

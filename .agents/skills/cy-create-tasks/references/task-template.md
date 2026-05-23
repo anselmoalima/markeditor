@@ -16,6 +16,7 @@ dependencies:
 # Task N: [Title]
 
 ## Overview
+
 [2-3 sentences: what the task accomplishes and why it matters in the context of the project.]
 
 <critical>
@@ -33,30 +34,37 @@ dependencies:
 </requirements>
 
 ## Subtasks
+
 - [ ] N.1 [Subtask description — WHAT to accomplish]
 - [ ] N.2 [Subtask description]
 - [ ] N.3 [Subtask description]
 
 ## Implementation Details
+
 [File paths to create or modify, integration points, and dependencies.
 Reference the TechSpec implementation section for code patterns and interface designs.]
 
 ### Relevant Files
+
 - `path/to/file` — [brief reason this file is relevant]
 
 ### Dependent Files
+
 - `path/to/dependency` — [brief reason this file is affected]
 
 ### Related ADRs
+
 - [ADR-NNN: Title](../adrs/adr-NNN.md) — Relevance to this task
 
 ## Deliverables
+
 - [Concrete output 1]
 - [Concrete output 2]
 - Unit tests with 80%+ coverage **(REQUIRED)**
 - Integration tests for [feature] **(REQUIRED)**
 
 ## Tests
+
 - Unit tests:
   - [ ] [Test case 1 — e.g., "Happy path: valid input returns expected output"]
   - [ ] [Test case 2 — e.g., "Error path: invalid input returns descriptive error"]
@@ -67,6 +75,7 @@ Reference the TechSpec implementation section for code patterns and interface de
 - All tests must pass
 
 ## Success Criteria
+
 - All tests passing
 - Test coverage >=80%
 - [Measurable outcome 1]

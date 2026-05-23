@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Changesets init (ignore apps/*)
 type: infra
 complexity: low
@@ -7,9 +7,10 @@ dependencies:
   - task_01
 ---
 
-# Task 09: Changesets init (ignore apps/*)
+# Task 09: Changesets init (ignore apps/\*)
 
 ## Overview
+
 Initialize Changesets so contributors declare version bumps inside PRs, and configure it to ignore every `apps/*` workspace so the playground is never released to npm. This is the versioning contract the release workflow (task_11) consumes.
 
 <critical>
@@ -30,45 +31,53 @@ Initialize Changesets so contributors declare version bumps inside PRs, and conf
 </requirements>
 
 ## Subtasks
-- [ ] 9.1 Install `@changesets/cli` at root and run `pnpm changeset init`.
-- [ ] 9.2 Edit `.changeset/config.json` to ignore `playground` and set `access: public`.
-- [ ] 9.3 Add root scripts wrapping `changeset`, `changeset version`, `changeset publish`.
-- [ ] 9.4 Verify `pnpm changeset` creates a draft file and `pnpm changeset version` correctly bumps `packages/markmd` only.
+
+- [x] 9.1 Install `@changesets/cli` at root and run `pnpm changeset init`.
+- [x] 9.2 Edit `.changeset/config.json` to ignore `playground` and set `access: public`.
+- [x] 9.3 Add root scripts wrapping `changeset`, `changeset version`, `changeset publish`.
+- [x] 9.4 Verify `pnpm changeset` creates a draft file and `pnpm changeset version` correctly bumps `packages/markmd` only.
 
 ## Implementation Details
+
 Reference TechSpec section "External System Interactions" (NPM publish) and ADR-004. Phase 0 does not publish anything yet — task_11 wires the publish workflow. This task only stages the metadata.
 
 ### Relevant Files
+
 - `.changeset/config.json` — Changesets config with ignore list.
 - `.changeset/README.md` — generated guidance for contributors.
 - `package.json` — root scripts and devDep.
 
 ### Dependent Files
+
 - `apps/playground/package.json` (task_07) — name must match the `ignore` entry.
 - `release.yml` (task_11) consumes Changesets.
 
 ### Related ADRs
+
 - [ADR-004: Versioning + publish — Changesets with NPM provenance via OIDC](adrs/adr-004.md) — versioning workflow.
 
 ## Deliverables
+
 - `.changeset/` directory committed with config + README.
 - Root scripts wired.
 - Unit tests asserting config shape **(REQUIRED)**.
 - Integration test: dry-run `changeset version` bumps only `markmd` **(REQUIRED)**.
 
 ## Tests
+
 - Unit tests:
-  - [ ] `.changeset/config.json` parses and contains `"access": "public"`, `"baseBranch": "main"`, `"ignore": ["playground"]`.
-  - [ ] Root `package.json` declares scripts `changeset`, `changeset:version`, `changeset:publish`.
-  - [ ] `@changesets/cli` is present in root devDependencies.
+  - [x] `.changeset/config.json` parses and contains `"access": "public"`, `"baseBranch": "main"`, `"ignore": ["playground"]`.
+  - [x] Root `package.json` declares scripts `changeset`, `changeset:version`, `changeset:publish`.
+  - [x] `@changesets/cli` is present in root devDependencies.
 - Integration tests:
-  - [ ] Create a temp changeset declaring a `patch` bump for `markmd`; running `pnpm changeset version` bumps `packages/markmd/package.json` and does NOT touch `apps/playground/package.json`.
-  - [ ] `pnpm changeset status --output=changeset-status.json` produces valid JSON.
-  - [ ] On a tree with no changesets, `pnpm changeset status --since=main` exits non-zero.
+  - [x] Create a temp changeset declaring a `patch` bump for `markmd`; running `pnpm changeset version` bumps `packages/markmd/package.json` and does NOT touch `apps/playground/package.json`.
+  - [x] `pnpm changeset status --output=changeset-status.json` produces valid JSON.
+  - [x] On a tree with no changesets, `pnpm changeset status --since=main` exits non-zero.
 - Test coverage target: >=80%
 - All tests must pass
 
 ## Success Criteria
+
 - All tests passing
 - Test coverage >=80%
 - Changesets recognizes `markmd` and ignores `playground`.

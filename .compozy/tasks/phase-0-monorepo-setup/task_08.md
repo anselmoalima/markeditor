@@ -1,15 +1,16 @@
 ---
-status: pending
+status: completed
 title: Playwright config + smoke e2e + axe
 type: test
 complexity: medium
 dependencies:
-  - task_07
+    - task_07
 ---
 
 # Task 08: Playwright config + smoke e2e + axe
 
 ## Overview
+
 Add Playwright to `apps/playground` with a single smoke e2e test that drives the production build (via `webServer: pnpm preview`) and asserts the `<MarkmdEditor />` mounts cleanly. Wire `@axe-core/playwright` into the same test to assert zero serious/critical a11y violations. This is the cross-browser proof that the published library actually loads in a real DOM.
 
 <critical>
@@ -30,6 +31,7 @@ Add Playwright to `apps/playground` with a single smoke e2e test that drives the
 </requirements>
 
 ## Subtasks
+
 - [ ] 8.1 Install `@playwright/test` and `@axe-core/playwright` in `apps/playground`.
 - [ ] 8.2 Add `apps/playground/playwright.config.ts` with `webServer` + `use.baseURL` + browser projects.
 - [ ] 8.3 Add `e2e/smoke.spec.ts` covering mount + console-error guard + Axe analysis.
@@ -37,27 +39,33 @@ Add Playwright to `apps/playground` with a single smoke e2e test that drives the
 - [ ] 8.5 Document local prerequisite `pnpm exec playwright install --with-deps chromium` in `apps/playground/README.md` or root `CONTRIBUTING.md` stub.
 
 ## Implementation Details
+
 Reference TechSpec sections "Testing Approach → E2E Tests" and ADR-003. Use `webServer.reuseExistingServer: !process.env.CI` so local re-runs are fast. Do NOT run e2e against the dev server — preview the production build to mirror what users will get.
 
 ### Relevant Files
+
 - `apps/playground/playwright.config.ts` — runner config.
 - `apps/playground/e2e/smoke.spec.ts` — smoke + axe spec.
 - `apps/playground/package.json` — e2e script + new devDeps.
 
 ### Dependent Files
+
 - `apps/playground/src/App.tsx` (task_07) is the page under test.
 - `ci.yml` (task_10) runs the e2e suite as part of the matrix.
 
 ### Related ADRs
+
 - [ADR-003: Test stack — Vitest (jsdom) + Playwright + axe-core + MSW](adrs/adr-003.md) — e2e + accessibility decisions.
 
 ## Deliverables
+
 - Playwright config + smoke e2e spec committed.
 - Playground README/CONTRIBUTING stub documenting browser-install prerequisite.
 - E2E suite passes locally with zero Axe serious/critical violations **(REQUIRED)**.
 - Console-error guard catches at least one synthetic error in a negative test fixture **(REQUIRED)**.
 
 ## Tests
+
 - Unit tests:
   - [ ] `playwright.config.ts` exports a config with `webServer.command` referencing `preview` and `reuseExistingServer` keyed off `process.env.CI`.
   - [ ] `playwright.config.ts` declares the `chromium` project.
@@ -71,6 +79,7 @@ Reference TechSpec sections "Testing Approach → E2E Tests" and ADR-003. Use `w
 - All tests must pass
 
 ## Success Criteria
+
 - All tests passing
 - Smoke e2e completes in <30s on Chromium locally.
 - Zero Axe serious/critical violations on the placeholder page.

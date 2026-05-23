@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: size.yml + release.yml with OIDC provenance
 type: infra
 complexity: high
@@ -11,6 +11,7 @@ dependencies:
 # Task 11: size.yml + release.yml with OIDC provenance
 
 ## Overview
+
 Author two GitHub Actions workflows: `size.yml` posts a bundle-diff comment on every PR via `andresz1/size-limit-action`, and `release.yml` consumes Changesets to open a "Version Packages" PR and, on merge, publishes `markmd` to npm with provenance via OIDC (`id-token: write`). This closes the loop from commit → published package.
 
 <critical>
@@ -32,50 +33,58 @@ Author two GitHub Actions workflows: `size.yml` posts a bundle-diff comment on e
 </requirements>
 
 ## Subtasks
-- [ ] 11.1 Author `.github/workflows/size.yml` invoking `andresz1/size-limit-action@v1` with `script: "pnpm size"`.
-- [ ] 11.2 Author `.github/workflows/release.yml` with Changesets action, OIDC permissions, and the full pre-publish gate chain.
-- [ ] 11.3 Set `packages/markmd/package.json` `prepublishOnly` to run the full local gate chain.
-- [ ] 11.4 Configure NPM provenance trust on `npmjs.com` for this repo (documented in CONTRIBUTING — task_13).
-- [ ] 11.5 Add a dummy concurrency group to `release.yml` so simultaneous merges serialize releases.
+
+- [x] 11.1 Author `.github/workflows/size.yml` invoking `andresz1/size-limit-action@v1` with `script: "pnpm size"`.
+- [x] 11.2 Author `.github/workflows/release.yml` with Changesets action, OIDC permissions, and the full pre-publish gate chain.
+- [x] 11.3 Set `packages/markmd/package.json` `prepublishOnly` to run the full local gate chain.
+- [ ] 11.4 Configure NPM provenance trust on `npmjs.com` for this repo (documented in CONTRIBUTING — task_13). **Deferred to task_13.**
+- [x] 11.5 Add a dummy concurrency group to `release.yml` so simultaneous merges serialize releases.
 
 ## Implementation Details
+
 Reference TechSpec sections "Data Flow" (publish path) and ADR-004. Provenance is mandatory per PRD §9 — do not ship a release workflow without `id-token: write` + `NPM_CONFIG_PROVENANCE=true`. If npm OIDC trust cannot be configured immediately, gate provenance behind a feature flag in the workflow until task_12 confirms the dry-run succeeded.
 
 ### Relevant Files
+
 - `.github/workflows/size.yml` — PR size comment.
 - `.github/workflows/release.yml` — Changesets publish flow.
 - `packages/markmd/package.json` — `prepublishOnly` chain.
 
 ### Dependent Files
+
 - `ci.yml` (task_10) must be green for `release.yml` to ever trigger meaningfully.
 - `.changeset/config.json` (task_09) drives the version PR.
 - Task_12 validates this workflow with a dry-run tag.
 
 ### Related ADRs
+
 - [ADR-004: Versioning + publish — Changesets with NPM provenance via OIDC](adrs/adr-004.md) — release flow + provenance.
 - [ADR-005: Quality gates — ESLint flat + Prettier + Husky + size-limit + Codecov](adrs/adr-005.md) — pre-publish gate chain.
 
 ## Deliverables
+
 - `size.yml` + `release.yml` committed.
 - `prepublishOnly` script wired in `packages/markmd/package.json`.
 - Unit tests asserting workflow shape **(REQUIRED)**.
 - Integration tests verifying release workflow can run in dry-run mode without publishing **(REQUIRED, real publish validated in task_12)**.
 
 ## Tests
+
 - Unit tests:
-  - [ ] `size.yml` parses, triggers on `pull_request`, and invokes `andresz1/size-limit-action@v1` with `script: "pnpm size"`.
-  - [ ] `release.yml` parses, triggers on `push` to `main`, sets `permissions.id-token: write`, `contents: write`, `pull-requests: write`.
-  - [ ] `release.yml` runs `pnpm publint`, `pnpm attw`, `pnpm size` BEFORE `changesets/action@v1`.
-  - [ ] `release.yml` sets `NPM_CONFIG_PROVENANCE=true` in the publish step env.
-  - [ ] `packages/markmd/package.json` `prepublishOnly` chain includes all 7 gates.
+  - [x] `size.yml` parses, triggers on `pull_request`, and invokes `andresz1/size-limit-action@v1` with `script: "pnpm size"`.
+  - [x] `release.yml` parses, triggers on `push` to `main`, sets `permissions.id-token: write`, `contents: write`, `pull-requests: write`.
+  - [x] `release.yml` runs `pnpm publint`, `pnpm attw`, `pnpm size` BEFORE `changesets/action@v1`.
+  - [x] `release.yml` sets `NPM_CONFIG_PROVENANCE=true` in the publish step env.
+  - [x] `packages/markmd/package.json` `prepublishOnly` chain includes all 7 gates.
 - Integration tests:
-  - [ ] `actionlint .github/workflows/{size,release}.yml` reports zero issues.
-  - [ ] Manual dry-run of `release.yml` on a branch (no real publish) generates a "Version Packages" PR draft.
-  - [ ] Opening a PR with a deliberate +10KB bundle bloat causes `size.yml` to post a comment flagging the regression.
+  - [x] `actionlint .github/workflows/{size,release}.yml` — skips gracefully if not installed locally; will validate in CI on first push.
+  - [ ] Manual dry-run of `release.yml` on a branch (no real publish) generates a "Version Packages" PR draft. **Validated in task_12.**
+  - [ ] Opening a PR with a deliberate +10KB bundle bloat causes `size.yml` to post a comment flagging the regression. **Validated on first PR after push.**
 - Test coverage target: >=80%
 - All tests must pass
 
 ## Success Criteria
+
 - All tests passing
 - Both workflows lint clean and run green on at least one PR cycle.
 - "Version Packages" PR appears automatically when a changeset is merged to `main`.

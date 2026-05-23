@@ -100,12 +100,14 @@ Apply this skill before:
 Commits and PRs are permanent artifacts. They require the highest verification standard.
 
 **Before `git commit`:**
+
 1. Run the full verification pipeline (e.g., `make verify`). Not a subset. The full pipeline.
 2. Confirm zero errors, zero warnings, zero test failures in the output.
 3. Produce a Verification Report (see template below) with verdict PASS.
 4. Only then run `git commit`.
 
 **Before creating a PR:**
+
 1. All of the above, plus:
 2. Verify the diff matches the intended changes (`git diff` review).
 3. Confirm no unrelated files are staged.
@@ -146,6 +148,7 @@ Verification failure is not a dead end. It is information. Follow this protocol:
 5. **Report with evidence.** Use the Verification Report Template. If it passes now, the claim may proceed. If it fails again, return to step 1.
 
 **Never:**
+
 - Claim partial success ("3 of 4 checks pass, close enough")
 - Skip re-verification after a fix ("I fixed the error, so it should pass now")
 - Blame the tooling ("the linter is wrong") without evidence of a false positive

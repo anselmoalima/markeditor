@@ -24,7 +24,9 @@ Desenvolver `markmd` — componente React reutilizável e configurável que ofer
 ## 2. Contexto e Motivação
 
 ### 2.1 Problema
+
 Os editores de Markdown disponíveis no ecossistema React (`react-md-editor`, `react-mde`, `react-markdown`) apresentam limitações como:
+
 - Bundles pesados sem possibilidade de tree-shaking efetivo
 - APIs de plugin rígidas ou inexistentes
 - Falta de uma toolbar verdadeiramente customizável
@@ -32,9 +34,11 @@ Os editores de Markdown disponíveis no ecossistema React (`react-md-editor`, `r
 - Ausência de suporte first-class para math, mermaid e callouts ao mesmo tempo
 
 ### 2.2 Oportunidade
+
 Construir um componente que combine o melhor de cada concorrente: a experiência de digitação do Monaco (mesmo motor do VS Code), o pipeline robusto e extensível do `unified` (remark/rehype), e uma API React idiomática com TypeScript estrito.
 
 ### 2.3 Visão de produto
+
 > "O melhor editor Markdown drop-in para aplicações React: instale, importe e configure. Funciona em qualquer contexto — blog, CMS, documentação técnica, ferramenta de notas — porque toda decisão de feature é uma prop."
 
 ---
@@ -42,6 +46,7 @@ Construir um componente que combine o melhor de cada concorrente: a experiência
 ## 3. Objetivos e Não-Objetivos
 
 ### 3.1 Objetivos (In-scope)
+
 1. Componente React único e configurável: `<MarkmdEditor />`
 2. Suporte completo a Markdown estendido (CommonMark + GFM + math + mermaid + alerts + footnotes)
 3. Modo Toggle: usuário alterna entre **edição** e **preview** (sem split view)
@@ -58,6 +63,7 @@ Construir um componente que combine o melhor de cada concorrente: a experiência
 14. i18n via configuração de strings
 
 ### 3.2 Não-objetivos (Out-of-scope) na v1.0
+
 1. **Modo WYSIWYG verdadeiro** (edição direta no preview sem ver markdown)
 2. **Split view** (edição e preview lado a lado simultaneamente)
 3. **Colaboração em tempo real** (CRDTs, Y.js, Liveblocks)
@@ -72,14 +78,16 @@ Construir um componente que combine o melhor de cada concorrente: a experiência
 ## 4. Personas e Casos de Uso
 
 ### 4.1 Personas
-| Persona | Quem é | O que precisa |
-|---|---|---|
-| **Dev de produto** | Desenvolve um CMS/blog/SaaS em React | Importar `<MarkmdEditor />` e ter um editor funcional em minutos |
-| **Dev de plataforma** | Constrói uma ferramenta interna complexa | Customizar toolbar, registrar plugins e atalhos específicos do domínio |
-| **Dev de docs técnicas** | Sistema de documentação interna | Suporte a math, mermaid, code blocks com highlight, footnotes |
-| **Usuário final** | Pessoa escrevendo o conteúdo | Editor responsivo, atalhos familiares, preview rápido e fiel |
+
+| Persona                  | Quem é                                   | O que precisa                                                          |
+| ------------------------ | ---------------------------------------- | ---------------------------------------------------------------------- |
+| **Dev de produto**       | Desenvolve um CMS/blog/SaaS em React     | Importar `<MarkmdEditor />` e ter um editor funcional em minutos       |
+| **Dev de plataforma**    | Constrói uma ferramenta interna complexa | Customizar toolbar, registrar plugins e atalhos específicos do domínio |
+| **Dev de docs técnicas** | Sistema de documentação interna          | Suporte a math, mermaid, code blocks com highlight, footnotes          |
+| **Usuário final**        | Pessoa escrevendo o conteúdo             | Editor responsivo, atalhos familiares, preview rápido e fiel           |
 
 ### 4.2 Casos de uso prioritários
+
 1. **Editor de posts** num CMS — usuário escreve markdown, alterna pro preview, salva
 2. **Editor de docs técnicas** com fórmulas matemáticas e diagramas mermaid
 3. **Editor de notas** rápido com atalhos extensivos e auto-save no localStorage
@@ -100,6 +108,7 @@ Construir um componente que combine o melhor de cada concorrente: a experiência
 **RF-5.1.4** A posição do scroll deve ser preservada de forma sensata ao alternar (scroll-sync best-effort por proporção).
 
 **RF-5.1.5** Props relacionados:
+
 ```typescript
 mode?: 'edit' | 'preview';         // controlado
 defaultMode?: 'edit' | 'preview';  // não-controlado (default: 'edit')
@@ -118,6 +127,7 @@ allowedModes?: Array<'edit' | 'preview'>; // restringe quais modos são possíve
 **RF-5.2.3** Carregamento lazy do Monaco (split chunk) para não bloquear o load inicial da aplicação consumidora.
 
 **RF-5.2.4** Features do Monaco habilitadas:
+
 - Syntax highlight do Markdown
 - Word wrap configurável (default: `on`)
 - Minimap (configurável, default: `off`)
@@ -174,6 +184,7 @@ markdown string
 | **HTML inline** | Permitido por padrão, mas sanitizado |
 
 **RF-5.3.3** Code blocks devem ter:
+
 - Syntax highlighting via highlight.js (mais leve) ou Prism
 - Header opcional com nome da linguagem
 - Botão "copiar" inline (configurável)
@@ -192,16 +203,16 @@ markdown string
 
 **RF-5.4.2** **Botões padrão** (na ordem, agrupados):
 
-| Grupo | Botões |
-|---|---|
-| Formatação | Bold, Italic, Strikethrough, Inline code |
-| Headings | H1, H2, H3 (dropdown para H4-H6) |
-| Listas | Bullet list, Numbered list, Task list |
-| Blocos | Blockquote, Code block, Horizontal rule |
-| Inserção | Link, Image, Table |
-| Avançado | Math inline, Math block, Mermaid block, Footnote |
-| Visualização | Toggle edit/preview |
-| Ações | Copy as HTML, Export, Undo, Redo |
+| Grupo        | Botões                                           |
+| ------------ | ------------------------------------------------ |
+| Formatação   | Bold, Italic, Strikethrough, Inline code         |
+| Headings     | H1, H2, H3 (dropdown para H4-H6)                 |
+| Listas       | Bullet list, Numbered list, Task list            |
+| Blocos       | Blockquote, Code block, Horizontal rule          |
+| Inserção     | Link, Image, Table                               |
+| Avançado     | Math inline, Math block, Mermaid block, Footnote |
+| Visualização | Toggle edit/preview                              |
+| Ações        | Copy as HTML, Export, Undo, Redo                 |
 
 **RF-5.4.3** Cada botão exibe tooltip com nome + atalho de teclado.
 
@@ -227,7 +238,7 @@ interface ToolbarButton {
   label: string;
   icon: ReactNode;
   tooltip?: string;
-  shortcut?: string;             // ex: 'Ctrl+Shift+K'
+  shortcut?: string; // ex: 'Ctrl+Shift+K'
   onClick: (api: EditorAPI) => void;
   isActive?: (state: EditorState) => boolean;
   position?: { group: string; order: number };
@@ -246,28 +257,28 @@ interface ToolbarButton {
 
 ```typescript
 interface MarkmdPlugin {
-  name: string;                  // identificador único, ex: 'plugin-emoji'
+  name: string; // identificador único, ex: 'plugin-emoji'
   version?: string;
-  
+
   // Pipeline de markdown
-  remarkPlugins?: PluggableList;  // injeta plugins no remark
-  rehypePlugins?: PluggableList;  // injeta plugins no rehype
-  
+  remarkPlugins?: PluggableList; // injeta plugins no remark
+  rehypePlugins?: PluggableList; // injeta plugins no rehype
+
   // Toolbar
   toolbarButtons?: ToolbarButton[];
-  
+
   // Atalhos
   shortcuts?: KeyboardShortcut[];
-  
+
   // Lifecycle hooks
   onMount?: (api: EditorAPI) => void | (() => void); // cleanup
   onChange?: (value: string, api: EditorAPI) => void;
-  onBeforeParse?: (markdown: string) => string;       // transform markdown
-  onAfterRender?: (html: string) => string;           // transform HTML
-  
+  onBeforeParse?: (markdown: string) => string; // transform markdown
+  onAfterRender?: (html: string) => string; // transform HTML
+
   // Renderers customizados de nó HTML
   components?: Record<string, React.ComponentType<any>>;
-  
+
   // i18n strings que o plugin adiciona
   i18n?: Record<string, Record<string, string>>;
 }
@@ -288,26 +299,27 @@ interface EditorAPI {
   setValue(value: string): void;
   getSelection(): { start: number; end: number; text: string };
   getCursorPosition(): number;
-  
+
   // Mutações
   insertText(text: string, position?: number): void;
   replaceSelection(text: string): void;
   wrapSelection(before: string, after: string): void;
-  
+
   // Modo
   getMode(): 'edit' | 'preview';
   setMode(mode: 'edit' | 'preview'): void;
-  
+
   // Editor
   focus(): void;
   blur(): void;
-  
+
   // Utilitários
   showNotification(message: string, type?: 'info' | 'error' | 'success'): void;
 }
 ```
 
 **RF-5.5.4** Plugins built-in distribuídos junto:
+
 - `gfm` (ativo por padrão)
 - `math` (ativo por padrão)
 - `mermaid` (ativo por padrão)
@@ -324,37 +336,37 @@ interface EditorAPI {
 
 **RF-5.6.1** Atalhos padrão (todos customizáveis via prop `shortcuts`):
 
-| Atalho | Ação |
-|---|---|
-| `Ctrl/Cmd + B` | Bold |
-| `Ctrl/Cmd + I` | Italic |
-| `Ctrl/Cmd + Shift + X` | Strikethrough |
-| `Ctrl/Cmd + K` | Insert link |
-| `Ctrl/Cmd + E` | Inline code |
-| `Ctrl/Cmd + Shift + C` | Code block |
-| `Ctrl/Cmd + Shift + .` | Blockquote |
-| `Ctrl/Cmd + Shift + 7` | Numbered list |
-| `Ctrl/Cmd + Shift + 8` | Bullet list |
-| `Ctrl/Cmd + Shift + 9` | Task list |
-| `Ctrl/Cmd + Alt + 1..6` | Heading H1..H6 |
-| `Ctrl/Cmd + Alt + T` | Insert table |
-| `Ctrl/Cmd + Alt + M` | Math inline |
-| `Ctrl/Cmd + Shift + M` | Math block |
-| `Ctrl/Cmd + S` | onSave callback (não salva sozinho) |
-| `Ctrl/Cmd + P` | Toggle edit ↔ preview |
-| `Ctrl/Cmd + /` | Toggle comment (HTML comment) |
-| `Tab` (em lista) | Indenta item |
-| `Shift+Tab` (em lista) | Desindenta item |
+| Atalho                  | Ação                                |
+| ----------------------- | ----------------------------------- |
+| `Ctrl/Cmd + B`          | Bold                                |
+| `Ctrl/Cmd + I`          | Italic                              |
+| `Ctrl/Cmd + Shift + X`  | Strikethrough                       |
+| `Ctrl/Cmd + K`          | Insert link                         |
+| `Ctrl/Cmd + E`          | Inline code                         |
+| `Ctrl/Cmd + Shift + C`  | Code block                          |
+| `Ctrl/Cmd + Shift + .`  | Blockquote                          |
+| `Ctrl/Cmd + Shift + 7`  | Numbered list                       |
+| `Ctrl/Cmd + Shift + 8`  | Bullet list                         |
+| `Ctrl/Cmd + Shift + 9`  | Task list                           |
+| `Ctrl/Cmd + Alt + 1..6` | Heading H1..H6                      |
+| `Ctrl/Cmd + Alt + T`    | Insert table                        |
+| `Ctrl/Cmd + Alt + M`    | Math inline                         |
+| `Ctrl/Cmd + Shift + M`  | Math block                          |
+| `Ctrl/Cmd + S`          | onSave callback (não salva sozinho) |
+| `Ctrl/Cmd + P`          | Toggle edit ↔ preview               |
+| `Ctrl/Cmd + /`          | Toggle comment (HTML comment)       |
+| `Tab` (em lista)        | Indenta item                        |
+| `Shift+Tab` (em lista)  | Desindenta item                     |
 
 **RF-5.6.2** Sistema de atalhos via interface:
 
 ```typescript
 interface KeyboardShortcut {
   id: string;
-  keys: string;                   // ex: 'Mod+B' (Mod = Cmd no Mac, Ctrl no Win/Linux)
+  keys: string; // ex: 'Mod+B' (Mod = Cmd no Mac, Ctrl no Win/Linux)
   action: (api: EditorAPI) => void;
   description?: string;
-  preventDefault?: boolean;       // default: true
+  preventDefault?: boolean; // default: true
   scope?: 'edit' | 'preview' | 'both'; // default: 'edit'
 }
 ```
@@ -375,6 +387,7 @@ shortcuts?: {
 ### 5.7 Imagens e Mídia
 
 **RF-5.7.1** Botão "Insert Image" na toolbar abre modal/dialog com:
+
 - Aba 1: URL externa
 - Aba 2: Upload de arquivo (se `onImageUpload` provido)
 - Aba 3: Paste de imagem do clipboard
@@ -400,6 +413,7 @@ onImageUpload?: (file: File) => Promise<{
 ### 5.8 Exportação
 
 **RF-5.8.1** Funcionalidades de export:
+
 - **Copy as HTML**: copia HTML renderizado pro clipboard
 - **Copy as Markdown**: copia markdown source pro clipboard
 - **Download as .md**: salva o markdown como arquivo
@@ -422,6 +436,7 @@ enableExport?: boolean | {
 ### 5.9 Persistência
 
 **RF-5.9.1** Componente trabalha **controlado** ou **não-controlado**:
+
 - Controlado: passar `value` + `onChange`
 - Não-controlado: passar `defaultValue` opcionalmente
 
@@ -435,6 +450,7 @@ autoSaveInterval?: number; // ms, default: 1000
 ```
 
 **RF-5.9.3** Quando `storage` está ativo:
+
 - Ao montar, carrega valor do storage (se existir e `value`/`defaultValue` não foram passados)
 - A cada mudança, faz debounce e grava no storage
 - Indica "salvo" / "salvando..." sutilmente no canto da toolbar
@@ -446,6 +462,7 @@ autoSaveInterval?: number; // ms, default: 1000
 ### 5.10 Temas
 
 **RF-5.10.1** Temas embutidos:
+
 - `'light'` (default)
 - `'dark'`
 - `'auto'` (segue `prefers-color-scheme`)
@@ -485,16 +502,18 @@ interface MarkmdTheme {
 ## 6. Requisitos Não-Funcionais
 
 ### 6.1 Performance
-| Métrica | Alvo |
-|---|---|
-| Tempo de carregamento inicial (sem Monaco) | <100ms |
-| Tempo de carregamento do Monaco (lazy) | <500ms em rede 4G |
-| Debounce de re-render do preview | 150ms (configurável) |
-| Re-render em document de 10k linhas | <300ms |
-| Bundle size (gzip, sem Monaco) | <80KB |
-| Bundle size (gzip, com Monaco lazy) | <500KB |
+
+| Métrica                                    | Alvo                 |
+| ------------------------------------------ | -------------------- |
+| Tempo de carregamento inicial (sem Monaco) | <100ms               |
+| Tempo de carregamento do Monaco (lazy)     | <500ms em rede 4G    |
+| Debounce de re-render do preview           | 150ms (configurável) |
+| Re-render em document de 10k linhas        | <300ms               |
+| Bundle size (gzip, sem Monaco)             | <80KB                |
+| Bundle size (gzip, com Monaco lazy)        | <500KB               |
 
 ### 6.2 Acessibilidade
+
 - WCAG 2.1 nível AA
 - Toolbar navegável por teclado (Tab/Arrow keys)
 - Botões com `aria-label`, `aria-pressed`, `aria-disabled`
@@ -504,6 +523,7 @@ interface MarkmdTheme {
 - Foco visível em todos os elementos interativos
 
 ### 6.3 Segurança (XSS)
+
 - **Sanitização ativa por padrão** via `rehype-sanitize` com schema do GitHub
 - Permitir HTML inline configurável (`allowHtml`), mas **sempre sanitizado**
 - Atributos `on*` (onClick, onError, etc.) sempre removidos
@@ -511,12 +531,14 @@ interface MarkmdTheme {
 - `data:` URLs apenas para imagens, configurável
 
 ### 6.4 Compatibilidade
+
 - React 18.0+ e React 19+
 - TypeScript 5.0+
 - Navegadores: últimas 2 versões de Chrome, Firefox, Safari, Edge
 - Node.js 18+ (para build/dev)
 
 ### 6.5 Bundle Size
+
 - Monaco em chunk separado (lazy)
 - KaTeX em chunk separado (lazy, ativado se houver math)
 - Mermaid em chunk separado (lazy, ativado se houver diagrama)
@@ -526,6 +548,7 @@ interface MarkmdTheme {
 ### 6.6 Requisitos de Pacote NPM
 
 **RNF-6.6.1 — Identidade no registry:**
+
 - `name`: `markmd`
 - `version`: SemVer estrito, gerenciado por **Changesets**
 - `license`: `MIT`
@@ -567,12 +590,14 @@ interface MarkmdTheme {
 ```
 
 **RNF-6.6.3 — Dual build ESM + CJS + types:**
+
 - Builder: **tsup** (Rollup interno) ou **unbuild**
 - Saída: `dist/esm/`, `dist/cjs/`, `dist/types/`, `dist/styles.css`
 - Source maps publicados (`*.map`)
 - `.d.ts` único por entrypoint (rollup-plugin-dts)
 
 **RNF-6.6.4 — Peer dependencies (não bundladas):**
+
 ```json
 {
   "peerDependencies": {
@@ -585,9 +610,11 @@ interface MarkmdTheme {
   }
 }
 ```
+
 Monaco, KaTeX, Mermaid: avaliar `optionalPeerDependencies` para consumidores que queiram versão própria; default = `dependencies` para zero-config.
 
 **RNF-6.6.5 — Publicação segura:**
+
 - NPM `--access public`
 - **Provenance** habilitado (`npm publish --provenance`) via GitHub Actions OIDC
 - 2FA obrigatório na conta de publicação
@@ -596,22 +623,26 @@ Monaco, KaTeX, Mermaid: avaliar `optionalPeerDependencies` para consumidores que
 - Verificação pré-publish: `pnpm publint` (lint do package.json) + `pnpm attw` (Are The Types Wrong?)
 
 **RNF-6.6.6 — Versionamento e changelog:**
+
 - **Changesets** (`@changesets/cli`) para PRs introduzirem entrada de versão
 - Release automático via GitHub Action ao mergear changeset
 - CHANGELOG.md gerado automaticamente
 - Tags Git por release; GitHub Releases com notas
 
 **RNF-6.6.7 — Consumo do pacote (DX-alvo):**
+
 ```tsx
 import { MarkmdEditor } from 'markmd';
 import 'markmd/styles';
 import { emojiPlugin } from 'markmd/plugins/emoji';
 ```
+
 - Import principal sem side effects (exceto CSS via subpath explícito)
 - Tipos auto-importados (TS detecta via `types` em exports)
 - Compatível com Next.js (App Router + Pages), Remix, Vite, CRA legacy
 
 **RNF-6.6.8 — Bundle observability:**
+
 - `size-limit` enforced em CI — bloqueia PR que estoure limite
 - `bundlephobia` badge no README
 - `publint` e `arethetypeswrong` zero warnings
@@ -621,67 +652,82 @@ import { emojiPlugin } from 'markmd/plugins/emoji';
 ### 6.7 Estratégia de Testes (TDD + padrões de mercado)
 
 **RNF-6.7.1 — Filosofia TDD:**
+
 - Toda feature de RF começa por teste falhando antes de código de produção
 - Pirâmide: **muitos unit → integration moderados → poucos e2e seletivos**
 - PR só merge com testes verdes + cobertura mantida
 
 **RNF-6.7.2 — Stack de testes:**
 
-| Camada | Ferramenta | Escopo |
-|---|---|---|
-| Unit | **Vitest** | Funções puras: pipeline, sanitize, helpers de markdown, shortcutManager, debounce, plugins built-in |
+| Camada                | Ferramenta                                                                                   | Escopo                                                                                                                 |
+| --------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Unit                  | **Vitest**                                                                                   | Funções puras: pipeline, sanitize, helpers de markdown, shortcutManager, debounce, plugins built-in                    |
 | Component/Integration | **@testing-library/react** + **@testing-library/user-event** + **@testing-library/jest-dom** | Comportamento do `<MarkmdEditor />`, toolbar, modais, atalhos, modo toggle, persistência, controlado vs não-controlado |
-| Type-level | **expect-type** ou **tsd** | Garantir tipos públicos não regridem (props, EditorAPI, plugin interface) |
-| Snapshot | Vitest inline snapshots | Output HTML do pipeline para fixtures de markdown |
-| E2E | **Playwright** (no `apps/playground`) | Fluxos reais: digitar, alternar modo, atalhos cross-OS, upload mockado, export |
-| Acessibilidade | **axe-core** + **@axe-core/playwright** + **jest-axe** | Zero violações WCAG AA em unit e e2e |
-| Visual regression | **Playwright screenshots** ou **Chromatic** (Storybook) | Toolbar, preview, temas light/dark |
-| Bundle size | **size-limit** | Limites por entrypoint (RF-6.1) em CI |
-| API contracts | **publint** + **@arethetypeswrong/cli** | Package.json + tipos publicados corretos |
-| Mocks de I/O | **MSW** | `onImageUpload`, fetch de menções, etc. |
-| Coverage | **Vitest v8 coverage** | ≥ 80% linhas, ≥ 75% branches |
+| Type-level            | **expect-type** ou **tsd**                                                                   | Garantir tipos públicos não regridem (props, EditorAPI, plugin interface)                                              |
+| Snapshot              | Vitest inline snapshots                                                                      | Output HTML do pipeline para fixtures de markdown                                                                      |
+| E2E                   | **Playwright** (no `apps/playground`)                                                        | Fluxos reais: digitar, alternar modo, atalhos cross-OS, upload mockado, export                                         |
+| Acessibilidade        | **axe-core** + **@axe-core/playwright** + **jest-axe**                                       | Zero violações WCAG AA em unit e e2e                                                                                   |
+| Visual regression     | **Playwright screenshots** ou **Chromatic** (Storybook)                                      | Toolbar, preview, temas light/dark                                                                                     |
+| Bundle size           | **size-limit**                                                                               | Limites por entrypoint (RF-6.1) em CI                                                                                  |
+| API contracts         | **publint** + **@arethetypeswrong/cli**                                                      | Package.json + tipos publicados corretos                                                                               |
+| Mocks de I/O          | **MSW**                                                                                      | `onImageUpload`, fetch de menções, etc.                                                                                |
+| Coverage              | **Vitest v8 coverage**                                                                       | ≥ 80% linhas, ≥ 75% branches                                                                                           |
 
 **RNF-6.7.3 — Estrutura de testes por feature (ciclo TDD):**
 
 Para cada RF, produzir nesta ordem:
+
 1. **Teste falhando** descrevendo comportamento esperado (Red)
 2. Implementação mínima até passar (Green)
 3. Refatoração com testes verdes (Refactor)
 
 Exemplo — RF-5.1.2 (toggle edit/preview):
+
 ```ts
 // tests/integration/mode-toggle.test.tsx
 describe('mode toggle', () => {
-  it('starts in edit mode by default', () => { /* ... */ });
-  it('switches to preview when toggle clicked', async () => { /* ... */ });
-  it('preserves content when switching modes', async () => { /* ... */ });
-  it('fires onModeChange callback', async () => { /* ... */ });
-  it('respects allowedModes prop', () => { /* ... */ });
+  it('starts in edit mode by default', () => {
+    /* ... */
+  });
+  it('switches to preview when toggle clicked', async () => {
+    /* ... */
+  });
+  it('preserves content when switching modes', async () => {
+    /* ... */
+  });
+  it('fires onModeChange callback', async () => {
+    /* ... */
+  });
+  it('respects allowedModes prop', () => {
+    /* ... */
+  });
 });
 ```
 
 **RNF-6.7.4 — Testes obrigatórios por categoria:**
 
-| Categoria | Cobertura mínima |
-|---|---|
-| Pipeline markdown | Cada feature de RF-5.3.2 com fixture in/out |
-| Sanitização | XSS vectors conhecidos (`<script>`, `onerror`, `javascript:`, `data:` malicioso) — battery do OWASP XSS Filter Cheat Sheet |
-| Toolbar | Cada botão default + custom button + hide/override |
-| Atalhos | Cada atalho de RF-5.6.1 + override + disable + cross-platform (Cmd vs Ctrl) |
-| Plugins | Cada lifecycle hook + ordem de execução + cleanup |
-| Persistência | Mount com storage, autoSave debounce, restore, conflito controlado vs storage |
-| Imagens | Upload sucesso, falha (rollback), drag-drop, paste |
-| Export | HTML, Markdown, download, print |
-| Tema | light, dark, auto (mock matchMedia), customizado |
-| i18n | Trocar locale em runtime, fallback para `en` |
-| Acessibilidade | axe em modo edit, modo preview, cada modal, cada tema |
+| Categoria         | Cobertura mínima                                                                                                           |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Pipeline markdown | Cada feature de RF-5.3.2 com fixture in/out                                                                                |
+| Sanitização       | XSS vectors conhecidos (`<script>`, `onerror`, `javascript:`, `data:` malicioso) — battery do OWASP XSS Filter Cheat Sheet |
+| Toolbar           | Cada botão default + custom button + hide/override                                                                         |
+| Atalhos           | Cada atalho de RF-5.6.1 + override + disable + cross-platform (Cmd vs Ctrl)                                                |
+| Plugins           | Cada lifecycle hook + ordem de execução + cleanup                                                                          |
+| Persistência      | Mount com storage, autoSave debounce, restore, conflito controlado vs storage                                              |
+| Imagens           | Upload sucesso, falha (rollback), drag-drop, paste                                                                         |
+| Export            | HTML, Markdown, download, print                                                                                            |
+| Tema              | light, dark, auto (mock matchMedia), customizado                                                                           |
+| i18n              | Trocar locale em runtime, fallback para `en`                                                                               |
+| Acessibilidade    | axe em modo edit, modo preview, cada modal, cada tema                                                                      |
 
 **RNF-6.7.5 — Cross-environment:**
+
 - Testes rodam em **jsdom** (Vitest) para a grande maioria
 - E2E em **Chromium, Firefox, WebKit** (Playwright matrix)
 - CI valida em **Node 18 + 20 + 22** e **React 18 + 19**
 
 **RNF-6.7.6 — Performance tests:**
+
 - Benchmark de render do pipeline em document de 10k linhas (Vitest `bench`)
 - Regression: falha CI se tempo > 1.2× baseline
 
@@ -692,14 +738,17 @@ describe('mode toggle', () => {
 ### 7.1 Stack final
 
 **Core:**
+
 - `react` ^18.0.0
 - `typescript` ^5.0.0
 
 **Editor:**
+
 - `@monaco-editor/react` ^4.6.0
 - `monaco-editor` ^0.46.0
 
 **Pipeline Markdown:**
+
 - `unified` ^11.0.0
 - `remark-parse`
 - `remark-gfm`
@@ -711,10 +760,12 @@ describe('mode toggle', () => {
 - `rehype-react`
 
 **Math/Diagrams:**
+
 - `katex` ^0.16.0
 - `mermaid` ^10.0.0
 
 **Build:**
+
 - `vite` ^5.0.0 (dev + build da lib)
 - `vitest` (testes)
 - `@testing-library/react` (testes de componente)
@@ -799,6 +850,7 @@ markmd/                                  # raiz do monorepo
 ```
 
 **Decisão arquitetural — UI no pacote NPM:** ❌ NÃO incluída.
+
 - `packages/markmd` exporta apenas `<MarkmdEditor />`, hooks, tipos, plugins, CSS.
 - `apps/playground` é app Vite + React consumindo `markmd` via workspace symlink (`"markmd": "workspace:*"`).
 - Razões (alinhadas com padrão de mercado — tiptap, lexical, mdxeditor, codemirror):
@@ -868,7 +920,7 @@ const pipeline = unified()
   .use(rehypeReact, {
     createElement: React.createElement,
     components: {
-      code: CodeBlock,         // override pra code blocks com copy
+      code: CodeBlock, // override pra code blocks com copy
       pre: PreBlock,
       img: SafeImage,
       a: SafeLink,
@@ -885,6 +937,7 @@ return result.result; // React.ReactElement
 **Propósito:** Aplicação React standalone para testar o `<MarkmdEditor />` em cenários reais. **NÃO publicada no NPM.** Usada por devs do pacote + base para e2e Playwright + deploy público para demo.
 
 **Stack:**
+
 - Vite + React + TypeScript
 - TailwindCSS (escolha de demo — não vaza pro pacote)
 - React Router (cenários como rotas)
@@ -910,6 +963,7 @@ return result.result; // React.ReactElement
 | `/ssr-safe` | Demonstra fallback SSR (Next.js-like) |
 
 **Painel lateral (DevTools):**
+
 - Toggle de props em tempo real (mode, theme, readOnly, etc.)
 - Inspetor de EditorAPI (botões para chamar `getValue`, `setMode`, `insertText`, etc.)
 - Visualizador de eventos disparados (`onChange`, `onModeChange`, `onSave`)
@@ -1040,15 +1094,15 @@ ref.current?.exportAsMarkdown();
 
 ### 8.3 Eventos disparados (resumo)
 
-| Evento | Quando dispara |
-|---|---|
-| `onChange` | A cada mudança do conteúdo (debounced pelo Monaco) |
-| `onSave` | `Ctrl+S` pressionado |
-| `onModeChange` | Usuário alterna edit ↔ preview |
-| `onMount` | Componente montou; recebe EditorAPI |
-| `onFocus` / `onBlur` | Editor ganha/perde foco |
-| `onSelectionChange` | Seleção muda no editor |
-| `onError` | Erro de parsing ou plugin |
+| Evento               | Quando dispara                                     |
+| -------------------- | -------------------------------------------------- |
+| `onChange`           | A cada mudança do conteúdo (debounced pelo Monaco) |
+| `onSave`             | `Ctrl+S` pressionado                               |
+| `onModeChange`       | Usuário alterna edit ↔ preview                     |
+| `onMount`            | Componente montou; recebe EditorAPI                |
+| `onFocus` / `onBlur` | Editor ganha/perde foco                            |
+| `onSelectionChange`  | Seleção muda no editor                             |
+| `onError`            | Erro de parsing ou plugin                          |
 
 ---
 
@@ -1099,9 +1153,9 @@ export const mentionsPlugin = (options: {
   fetchUsers: (query: string) => Promise<User[]>;
 }): MarkmdPlugin => ({
   name: 'mentions',
-  
+
   remarkPlugins: [[remarkMention, options]],
-  
+
   components: {
     mention: ({ username }) => (
       <a href={`/users/${username}`} className="mention">
@@ -1146,7 +1200,9 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 > **Nota:** cada fase é independente e entregável. Ao final de cada fase, há uma versão usável da biblioteca com mais recursos.
 
 ### Fase 0 — Setup do Monorepo + Infra de Testes (Semana 0)
+
 **Objetivo:** Fundação NPM-ready antes de uma linha de feature.
+
 - [ ] `pnpm-workspace.yaml` + `packages/markmd` + `apps/playground`
 - [ ] Turborepo (`turbo.json`) com pipeline build/test/lint/typecheck
 - [ ] `packages/markmd/package.json` com `exports` map completo, `peerDeps`, `files`, `sideEffects`
@@ -1163,7 +1219,9 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 **Entregável:** Monorepo verde no CI, pronto para TDD.
 
 ### Fase 1 — MVP / Foundation (Semana 1-2)
+
 **Objetivo:** Editor funcional básico com toggle e renderização. **TDD desde o primeiro commit.**
+
 - [ ] Testes unit do pipeline markdown (fixtures de RF-5.3.2)
 - [ ] Pipeline básico: remark + remark-gfm + rehype + rehype-sanitize + rehype-react
 - [ ] Componente `<MarkmdEditor>` esqueleto (teste de mount primeiro)
@@ -1179,6 +1237,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 **Entregável:** v0.1.0 — componente importável funcional, publicável (dry-run NPM).
 
 ### Fase 2 — Toolbar e Atalhos (Semana 3)
+
 - [ ] Componente `<Toolbar>` configurável
 - [ ] Todos os botões padrão (RF-5.4.2) funcionais
 - [ ] Modais: Insert Link, Insert Image (URL), Insert Table
@@ -1192,6 +1251,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 **Entregável:** v0.2.0 — editor com toolbar completa funcional.
 
 ### Fase 3 — Markdown Estendido (Semana 4)
+
 - [ ] Math inline e block (remark-math + rehype-katex)
 - [ ] Mermaid (custom rehype plugin que detecta `mermaid` code block)
 - [ ] Alerts/Callouts GitHub-style (`> [!NOTE]` etc.)
@@ -1204,6 +1264,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 **Entregável:** v0.3.0 — todo o espectro de markdown suportado.
 
 ### Fase 4 — Sistema de Plugins (Semana 5)
+
 - [ ] Interface formal `MarkmdPlugin`
 - [ ] `pluginManager.ts` com lifecycle
 - [ ] `EditorAPI` completa
@@ -1218,6 +1279,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 **Entregável:** v0.4.0 — biblioteca extensível.
 
 ### Fase 5 — Recursos Avançados (Semana 6)
+
 - [ ] Upload de imagens via `onImageUpload`
 - [ ] Drag-and-drop de imagens
 - [ ] Paste de imagens do clipboard
@@ -1232,6 +1294,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 **Entregável:** v0.5.0 — pronto para uso em produção.
 
 ### Fase 6 — Polish e Lançamento NPM (Semana 7)
+
 - [ ] Acessibilidade completa (audit com Axe — zero violações AA)
 - [ ] Performance audit (bundle size, render time, bench de 10k linhas)
 - [ ] Documentação completa (README + site Docusaurus opcional)
@@ -1277,38 +1340,39 @@ Para considerar a v1.0 completa:
 
 ## 13. Fora de Escopo (v1.0 — anotado para futuro)
 
-| Feature | Razão de adiar | Possível versão |
-|---|---|---|
-| Split view (edit + preview lado a lado) | Decisão de produto: toggle escolhido | v1.1 |
-| WYSIWYG verdadeiro | Complexidade alta, escopo dobraria | v2.0 |
-| Colaboração em tempo real (Y.js) | Requer backend, escopo enorme | v2.0+ |
-| Versionamento de documentos | Fora do componente | Nunca |
-| Plugins remotos via URL | Risco de segurança | Talvez v1.2 |
-| Otimização mobile-first | Funciona, mas não otimizado | v1.1 |
-| SSR completo do preview | Monaco é client-only | v1.1 (preview SSR) |
-| AI-assisted writing | Não é prioridade do produto | v1.2+ |
-| Export PDF nativo (sem print) | Lib pesada (pdfmake/jsPDF) | v1.2 |
+| Feature                                 | Razão de adiar                       | Possível versão    |
+| --------------------------------------- | ------------------------------------ | ------------------ |
+| Split view (edit + preview lado a lado) | Decisão de produto: toggle escolhido | v1.1               |
+| WYSIWYG verdadeiro                      | Complexidade alta, escopo dobraria   | v2.0               |
+| Colaboração em tempo real (Y.js)        | Requer backend, escopo enorme        | v2.0+              |
+| Versionamento de documentos             | Fora do componente                   | Nunca              |
+| Plugins remotos via URL                 | Risco de segurança                   | Talvez v1.2        |
+| Otimização mobile-first                 | Funciona, mas não otimizado          | v1.1               |
+| SSR completo do preview                 | Monaco é client-only                 | v1.1 (preview SSR) |
+| AI-assisted writing                     | Não é prioridade do produto          | v1.2+              |
+| Export PDF nativo (sem print)           | Lib pesada (pdfmake/jsPDF)           | v1.2               |
 
 ---
 
 ## 14. Riscos Técnicos e Mitigações
 
-| Risco | Impacto | Mitigação |
-|---|---|---|
-| Monaco é pesado e SSR-incompatível | Alto | Lazy load + fallback de textarea em SSR |
-| KaTeX/Mermaid quebram em conteúdo malformado | Médio | Catch erros e exibir mensagem inline, não quebrar todo o preview |
-| Pipeline `unified` é assíncrono | Médio | Usar `useEffect` + estado, com loading sutil |
-| Conflitos de atalho com o sistema operacional | Médio | Usar atalhos conservadores; permitir override |
-| Sanitização muito agressiva quebra conteúdo legítimo | Médio | Schema baseado no GitHub, customizável |
-| Bundle size escala com plugins | Médio | Tree-shaking estrito + plugins lazy |
-| Diferenças Monaco entre Mac/Windows/Linux | Baixo | Testar nos 3 SOs |
-| Memory leaks com unmount frequente | Médio | Garantir cleanup em todos os hooks e plugins |
+| Risco                                                | Impacto | Mitigação                                                        |
+| ---------------------------------------------------- | ------- | ---------------------------------------------------------------- |
+| Monaco é pesado e SSR-incompatível                   | Alto    | Lazy load + fallback de textarea em SSR                          |
+| KaTeX/Mermaid quebram em conteúdo malformado         | Médio   | Catch erros e exibir mensagem inline, não quebrar todo o preview |
+| Pipeline `unified` é assíncrono                      | Médio   | Usar `useEffect` + estado, com loading sutil                     |
+| Conflitos de atalho com o sistema operacional        | Médio   | Usar atalhos conservadores; permitir override                    |
+| Sanitização muito agressiva quebra conteúdo legítimo | Médio   | Schema baseado no GitHub, customizável                           |
+| Bundle size escala com plugins                       | Médio   | Tree-shaking estrito + plugins lazy                              |
+| Diferenças Monaco entre Mac/Windows/Linux            | Baixo   | Testar nos 3 SOs                                                 |
+| Memory leaks com unmount frequente                   | Médio   | Garantir cleanup em todos os hooks e plugins                     |
 
 ---
 
 ## 15. Dependências (lista final)
 
 ### Dependências `peer`
+
 ```json
 {
   "react": "^18.0.0 || ^19.0.0",
@@ -1317,6 +1381,7 @@ Para considerar a v1.0 completa:
 ```
 
 ### Dependências de runtime
+
 ```json
 {
   "@monaco-editor/react": "^4.6.0",
@@ -1338,6 +1403,7 @@ Para considerar a v1.0 completa:
 ```
 
 ### Dependências de desenvolvimento
+
 ```json
 {
   "vite": "^5.0.0",
@@ -1370,6 +1436,7 @@ Para considerar a v1.0 completa:
 ```
 
 ### Workspace tooling (raiz)
+
 ```json
 {
   "pnpm": "^9.0.0",
@@ -1383,21 +1450,22 @@ Para considerar a v1.0 completa:
 
 ### 16.1 Glossário
 
-| Termo | Definição |
-|---|---|
-| **AST** | Abstract Syntax Tree — árvore de nós representando estrutura do markdown |
-| **mdast** | Markdown AST, formato do remark |
-| **hast** | HTML AST, formato do rehype |
-| **unified** | Engine que coordena transformações entre ASTs |
-| **GFM** | GitHub Flavored Markdown |
-| **WYSIWYG** | What You See Is What You Get — edição visual direta |
-| **Lazy load** | Carregar recurso só quando necessário |
-| **Tree-shaking** | Remoção de código não-usado no bundle final |
-| **CRDT** | Conflict-free Replicated Data Type — base para colaboração em tempo real |
-| **Sanitização** | Limpeza de HTML potencialmente malicioso |
-| **EditorAPI** | Objeto imperativo exposto a plugins para controlar o editor |
+| Termo            | Definição                                                                |
+| ---------------- | ------------------------------------------------------------------------ |
+| **AST**          | Abstract Syntax Tree — árvore de nós representando estrutura do markdown |
+| **mdast**        | Markdown AST, formato do remark                                          |
+| **hast**         | HTML AST, formato do rehype                                              |
+| **unified**      | Engine que coordena transformações entre ASTs                            |
+| **GFM**          | GitHub Flavored Markdown                                                 |
+| **WYSIWYG**      | What You See Is What You Get — edição visual direta                      |
+| **Lazy load**    | Carregar recurso só quando necessário                                    |
+| **Tree-shaking** | Remoção de código não-usado no bundle final                              |
+| **CRDT**         | Conflict-free Replicated Data Type — base para colaboração em tempo real |
+| **Sanitização**  | Limpeza de HTML potencialmente malicioso                                 |
+| **EditorAPI**    | Objeto imperativo exposto a plugins para controlar o editor              |
 
 ### 16.2 Referências
+
 - CommonMark Spec: https://spec.commonmark.org/
 - GFM Spec: https://github.github.com/gfm/
 - unified ecosystem: https://unifiedjs.com/
@@ -1407,6 +1475,7 @@ Para considerar a v1.0 completa:
 - WCAG 2.1: https://www.w3.org/TR/WCAG21/
 
 ### 16.3 Editores de referência (benchmark visual)
+
 - **StackEdit** (modo toggle): inspiração para alternância edit/preview
 - **HackMD**: inspiração para toolbar e features estendidas
 - **Obsidian**: inspiração para sistema de plugins e atalhos
@@ -1458,7 +1527,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  id-token: write   # OIDC para provenance
+  id-token: write # OIDC para provenance
 jobs:
   release:
     runs-on: ubuntu-latest

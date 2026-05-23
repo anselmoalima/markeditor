@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Main bundle (ESM, no Monaco)",
+    "path": "dist/index.mjs",
+    "limit": "80 KB"
+  },
+  {
+    "name": "Plugins bundle (ESM)",
+    "path": "dist/plugins/index.mjs",
+    "limit": "10 KB"
+  }
+]

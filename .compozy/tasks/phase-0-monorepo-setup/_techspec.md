@@ -10,18 +10,18 @@ Phase 0 delivers the **NPM-ready foundation** for `markmd`: a pnpm + Turborepo m
 
 ### Component Overview
 
-| Component | Type | Responsibility |
-|---|---|---|
-| `packages/markmd` | Published NPM package | Library source skeleton (`src/index.ts`, `src/MarkmdEditor.tsx` placeholder), build output (`dist/`), CSS bundle, test suites. |
-| `apps/playground` | Private Vite + React app | Consumes `markmd` via `workspace:*`, hosts Playwright e2e smoke test, deploys to Vercel from Phase 6 onward. |
-| `turbo.json` | Pipeline orchestrator | Declares `build`, `test`, `lint`, `typecheck`, `size`, `e2e` tasks with input/output hashing. |
-| `tsconfig.base.json` | Shared TS config | `strict: true`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`; extended by every workspace. |
-| `eslint.config.js` | Flat ESLint config (root) | Type-aware lint for TS/TSX, react/react-hooks/jsx-a11y/import-x plugins, per-workspace overrides. |
-| `.changeset/` | Versioning workflow | Records bump intents per PR; `apps/*` ignored. |
-| `.github/workflows/ci.yml` | PR gate | Matrix Node × React → install, lint, typecheck, test+coverage, build, size-limit, publint, attw, Playwright smoke. |
-| `.github/workflows/release.yml` | Publish workflow | Changesets "Version Packages" PR; on merge: build + `npm publish --provenance` via OIDC. |
-| `.github/workflows/size.yml` | PR size comment | `andresz1/size-limit-action` posts diff comment. |
-| Husky + lint-staged | Local pre-commit | Runs `eslint --fix` + `prettier --write` on staged files. |
+| Component                       | Type                      | Responsibility                                                                                                                 |
+| ------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/markmd`               | Published NPM package     | Library source skeleton (`src/index.ts`, `src/MarkmdEditor.tsx` placeholder), build output (`dist/`), CSS bundle, test suites. |
+| `apps/playground`               | Private Vite + React app  | Consumes `markmd` via `workspace:*`, hosts Playwright e2e smoke test, deploys to Vercel from Phase 6 onward.                   |
+| `turbo.json`                    | Pipeline orchestrator     | Declares `build`, `test`, `lint`, `typecheck`, `size`, `e2e` tasks with input/output hashing.                                  |
+| `tsconfig.base.json`            | Shared TS config          | `strict: true`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`; extended by every workspace.                         |
+| `eslint.config.js`              | Flat ESLint config (root) | Type-aware lint for TS/TSX, react/react-hooks/jsx-a11y/import-x plugins, per-workspace overrides.                              |
+| `.changeset/`                   | Versioning workflow       | Records bump intents per PR; `apps/*` ignored.                                                                                 |
+| `.github/workflows/ci.yml`      | PR gate                   | Matrix Node × React → install, lint, typecheck, test+coverage, build, size-limit, publint, attw, Playwright smoke.             |
+| `.github/workflows/release.yml` | Publish workflow          | Changesets "Version Packages" PR; on merge: build + `npm publish --provenance` via OIDC.                                       |
+| `.github/workflows/size.yml`    | PR size comment           | `andresz1/size-limit-action` posts diff comment.                                                                               |
+| Husky + lint-staged             | Local pre-commit          | Runs `eslint --fix` + `prettier --write` on staged files.                                                                      |
 
 ### Data Flow
 
@@ -125,9 +125,17 @@ Phase 0 has no domain data model. Configuration artifacts (deserved by static an
     "name": "markmd",
     "type": "module",
     "exports": {
-      ".":          { "types": "./dist/index.d.ts",  "import": "./dist/index.mjs",  "require": "./dist/index.cjs" },
-      "./styles":   "./dist/styles.css",
-      "./plugins":  { "types": "./dist/plugins/index.d.ts", "import": "./dist/plugins/index.mjs", "require": "./dist/plugins/index.cjs" },
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./styles": "./dist/styles.css",
+      "./plugins": {
+        "types": "./dist/plugins/index.d.ts",
+        "import": "./dist/plugins/index.mjs",
+        "require": "./dist/plugins/index.cjs"
+      },
       "./package.json": "./package.json"
     },
     "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE"],
@@ -144,21 +152,21 @@ Not applicable — `markmd` is a client-side library; no HTTP surface.
 
 ## Integration Points
 
-| External system | Purpose | Auth | Failure mode |
-|---|---|---|---|
-| NPM registry | Publish `markmd` package | GitHub OIDC → npm provenance | Release workflow fails; no partial publish (Changesets is atomic). |
-| Codecov | Coverage badge + trend | OIDC (token-less) or repo secret | CI warning, non-blocking. |
-| GitHub Actions cache | Speed up Turbo + pnpm-store | Native | Cold cache → slower CI, still green. |
+| External system      | Purpose                     | Auth                             | Failure mode                                                       |
+| -------------------- | --------------------------- | -------------------------------- | ------------------------------------------------------------------ |
+| NPM registry         | Publish `markmd` package    | GitHub OIDC → npm provenance     | Release workflow fails; no partial publish (Changesets is atomic). |
+| Codecov              | Coverage badge + trend      | OIDC (token-less) or repo secret | CI warning, non-blocking.                                          |
+| GitHub Actions cache | Speed up Turbo + pnpm-store | Native                           | Cold cache → slower CI, still green.                               |
 
 ## Impact Analysis
 
-| Component | Impact Type | Description and Risk | Required Action |
-|---|---|---|---|
-| Repo root | New | Adds `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json`, `eslint.config.js`, `.prettierrc`, `.changeset/`, `.husky/`, root `package.json`. Low risk: greenfield. | Create files per Build Order. |
-| `packages/markmd` | New | New package directory with skeleton source, tests, build config (`tsup.config.ts`), `size-limit.json`. | Scaffold per ADR-001/002. |
-| `apps/playground` | New | Vite app consuming `markmd` via `workspace:*`, Playwright e2e config. Low risk: not published. | Scaffold per ADR-003. |
-| GitHub Actions | New | Three workflows (`ci.yml`, `release.yml`, `size.yml`). Risk: OIDC misconfig blocks first release. | Dry-run release workflow before v0.1.0; tag with `0.0.0-test`. |
-| Existing files (`PRD.md`, `DESIGN.md`, `CLAUDE.md`, `README.md`) | Untouched | None. | No change. |
+| Component                                                        | Impact Type | Description and Risk                                                                                                                                                    | Required Action                                                |
+| ---------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Repo root                                                        | New         | Adds `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json`, `eslint.config.js`, `.prettierrc`, `.changeset/`, `.husky/`, root `package.json`. Low risk: greenfield. | Create files per Build Order.                                  |
+| `packages/markmd`                                                | New         | New package directory with skeleton source, tests, build config (`tsup.config.ts`), `size-limit.json`.                                                                  | Scaffold per ADR-001/002.                                      |
+| `apps/playground`                                                | New         | Vite app consuming `markmd` via `workspace:*`, Playwright e2e config. Low risk: not published.                                                                          | Scaffold per ADR-003.                                          |
+| GitHub Actions                                                   | New         | Three workflows (`ci.yml`, `release.yml`, `size.yml`). Risk: OIDC misconfig blocks first release.                                                                       | Dry-run release workflow before v0.1.0; tag with `0.0.0-test`. |
+| Existing files (`PRD.md`, `DESIGN.md`, `CLAUDE.md`, `README.md`) | Untouched   | None.                                                                                                                                                                   | No change.                                                     |
 
 ## Testing Approach
 

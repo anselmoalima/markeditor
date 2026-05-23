@@ -80,6 +80,7 @@ Install flow: `compozy ext install --yes compozy/compozy --remote github --ref <
 6. Workflow memory is maintained across tasks via `cy-workflow-memory`.
 
 **Key flags:**
+
 - `--auto-commit` -- create a local commit after each task completes cleanly.
 - `--dry-run` -- generate prompts without running the IDE tool.
 - `--include-completed` -- re-process tasks already marked as completed.
@@ -114,6 +115,7 @@ Fetches review comments from an external provider (currently CodeRabbit) and wri
 4. Issue file frontmatter is updated: `pending` -> `valid`/`invalid` -> `resolved`.
 
 **Key flags:**
+
 - `--concurrent <N>` -- process N batches in parallel.
 - `--batch-size <N>` -- group N file scopes per batch.
 - `--include-resolved` -- re-process already-resolved issues.
@@ -143,10 +145,10 @@ Execute a single prompt outside the pipeline workflow.
 
 The `cy-workflow-memory` skill maintains two tiers of context during task execution:
 
-| File | Purpose |
-| --- | --- |
-| `.compozy/tasks/<slug>/memory/MEMORY.md` | Shared cross-task memory: architecture decisions, discovered patterns, open risks, handoffs |
-| `.compozy/tasks/<slug>/memory/task_NN.md` | Per-task memory: objective snapshot, files touched, errors hit, next steps |
+| File                                      | Purpose                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `.compozy/tasks/<slug>/memory/MEMORY.md`  | Shared cross-task memory: architecture decisions, discovered patterns, open risks, handoffs |
+| `.compozy/tasks/<slug>/memory/task_NN.md` | Per-task memory: objective snapshot, files touched, errors hit, next steps                  |
 
 - Memory files are scaffolded before task execution and updated during the run.
 - Agents read both files as mandatory context before editing code.

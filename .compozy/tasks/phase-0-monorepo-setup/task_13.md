@@ -11,6 +11,7 @@ dependencies:
 # Task 13: README + badges + CONTRIBUTING.md
 
 ## Overview
+
 Write the root `README.md` with project pitch + badges (npm, CI, coverage, bundlephobia, license) and the `CONTRIBUTING.md` that documents the dev workflow (pnpm setup via Corepack, common commands, Changesets, branch protection, release procedure including the OIDC trust setup proven in task_12). This is the human-facing entry point that closes Phase 0.
 
 <critical>
@@ -30,6 +31,7 @@ Write the root `README.md` with project pitch + badges (npm, CI, coverage, bundl
 </requirements>
 
 ## Subtasks
+
 - [ ] 13.1 Author root `README.md` with badges + pitch + install/usage + links.
 - [ ] 13.2 Author `packages/markmd/README.md` (NPM-facing variant).
 - [ ] 13.3 Author `CONTRIBUTING.md` covering setup, commands, TDD, Changesets, release.
@@ -37,28 +39,34 @@ Write the root `README.md` with project pitch + badges (npm, CI, coverage, bundl
 - [ ] 13.5 Cross-link `README.md` ↔ `CONTRIBUTING.md` ↔ `PRD.md` ↔ `DESIGN.md` ↔ `CLAUDE.md`.
 
 ## Implementation Details
+
 Reference TechSpec section "Monitoring and Observability" (badge inventory) and PRD §11 Fase 6 checklist (README requirements anticipated early here). Keep both READMEs short — the goal is a working onboarding, not exhaustive docs (Phase 6 owns Docusaurus + Storybook).
 
 ### Relevant Files
+
 - `README.md` (root) — project entry point.
 - `packages/markmd/README.md` — NPM tarball entry.
 - `CONTRIBUTING.md` — dev workflow.
 
 ### Dependent Files
+
 - `ci.yml` (task_10), Codecov project (set up in task_10) — referenced by badges.
 - `release.yml` (task_11), task_12 procedure — referenced in CONTRIBUTING.
 
 ### Related ADRs
+
 - [ADR-004: Versioning + publish — Changesets with NPM provenance via OIDC](adrs/adr-004.md) — release procedure documented in CONTRIBUTING.
 - [ADR-005: Quality gates — ESLint flat + Prettier + Husky + size-limit + Codecov](adrs/adr-005.md) — coverage badge sourced from Codecov.
 
 ## Deliverables
+
 - `README.md`, `packages/markmd/README.md`, `CONTRIBUTING.md` committed.
 - All badges resolve.
 - Unit tests asserting required content present **(REQUIRED)**.
 - Integration test: links validated by a Markdown link-check tool **(REQUIRED)**.
 
 ## Tests
+
 - Unit tests:
   - [ ] Root `README.md` contains an `## Install` section with the literal `pnpm add markmd` snippet.
   - [ ] Root `README.md` contains badge image references for npm version, CI, Codecov, bundlephobia, license.
@@ -72,6 +80,7 @@ Reference TechSpec section "Monitoring and Observability" (badge inventory) and 
 - All tests must pass
 
 ## Success Criteria
+
 - All tests passing
 - All badges resolve to live targets.
 - A contributor following `CONTRIBUTING.md` cold can go from clone → green local `pnpm test` in under 5 minutes.

@@ -50,11 +50,13 @@ Before promoting an item from task memory to shared workflow memory, ask:
 All three must be "yes" to promote. If any is "no," the item stays in task memory.
 
 **Examples that belong in shared workflow memory:**
+
 - A discovered constraint that affects multiple tasks (e.g., "the API rate limits to 100 req/s, batch operations must respect this")
 - A cross-cutting architectural decision made during implementation (e.g., "chose channel-based coordination over mutex for the pipeline")
 - An open risk that future tasks must account for (e.g., "migration depends on schema v3 which is not yet deployed to staging")
 
 **Examples that stay in task memory:**
+
 - Files touched during this task's implementation
 - Debugging steps taken to resolve a task-specific error
 - The current task's objective and acceptance criteria snapshot

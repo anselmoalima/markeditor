@@ -1,7 +1,7 @@
 ---
 name: cy-create-tasks
 description: Decomposes PRDs and TechSpecs into detailed, independently implementable task files with enrichment from codebase exploration. Use when a PRD or TechSpec exists and needs to be broken down into executable tasks, or when task files need enrichment with implementation context. Do not use for PRD creation, TechSpec generation, or direct task execution.
-argument-hint: "[feature-name] [prd-file]"
+argument-hint: '[feature-name] [prd-file]'
 ---
 
 # Create Tasks
@@ -55,15 +55,17 @@ Decompose requirements into detailed, actionable task files with codebase-inform
 
 5. Generate task files.
    - Write `_tasks.md` as the master task list using this exact markdown table format:
+
      ```markdown
      # [Feature Name] — Task List
 
      ## Tasks
 
-     | # | Title | Status | Complexity | Dependencies |
-     |---|-------|--------|------------|--------------|
-     | 01 | [Task title] | pending | [low/medium/high/critical] | [task_NN, ... or —] |
+     | #   | Title        | Status  | Complexity                 | Dependencies        |
+     | --- | ------------ | ------- | -------------------------- | ------------------- |
+     | 01  | [Task title] | pending | [low/medium/high/critical] | [task_NN, ... or —] |
      ```
+
    - Write individual task files as `task_01.md`, `task_02.md`, through `task_N.md`.
    - Task files use the `task_` prefix without a leading underscore.
    - Each file must start with YAML frontmatter containing `status`, `title`, `type`, `complexity`, and `dependencies`. Use `dependencies: []` when there are no dependencies — do not omit the field.
