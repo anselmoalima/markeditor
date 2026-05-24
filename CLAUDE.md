@@ -1,192 +1,312 @@
-# CLAUDE.md — Guia do projeto `markeditor`
+# CLAUDE.md
 
-Guia para Claude Code trabalhar neste repositório. Para escopo completo de produto, ler `PRD.md` (fonte canônica). Para sistema de design (cores, tipografia, componentes, espaçamento), **ler e aplicar `DESIGN.md`** — fonte canônica visual para toda UI do playground, docs e componentes da lib.
-
----
-
-## 1. O que é o projeto
-
-`markeditor` — componente React (`<MarkEditor />`) distribuído como pacote NPM. Editor Markdown configurável com Monaco Editor + pipeline `unified` (remark/rehype). Modo **toggle** entre `edit` e `preview` (sem split view, sem WYSIWYG na v1).
-
-Stack-alvo: React 18+/19, TypeScript estrito, ESM+CJS dual build.
+Guia operacional do projeto **bob-editor** para o Claude Code. Conteúdo derivado do `PRD.md` (v1.1). Em caso de conflito, o PRD é a fonte autoritativa.
 
 ---
 
-## 2. Layout do monorepo (pnpm workspaces)
+## 1. Visão geral
+
+`bob-editor` é um componente React (`<BobEditor />`) distribuído como pacote NPM. Oferece um editor Markdown completo com:
+
+- **Modo toggle** (edit ↔ preview, sem split view)
+- **Monaco Editor** como engine de edição (lazy load)
+- **Pipeline unified** (remark/rehype) para renderização
+- **Markdown estendido**: GFM, math (KaTeX), Mermaid, alerts/callouts, footnotes
+- **Sistema de plugins** com lifecycle hooks e `EditorAPI` imperativa
+- **Toolbar e atalhos** totalmente customizáveis
+- **Sanitização XSS** por padrão (`rehype-sanitize`)
+- **Temas** light/dark/auto + customizado via CSS variables
+- **i18n**, persistência localStorage, upload de imagens, export HTML/MD
+
+**Estratégia de entrega:** monorepo pnpm + Turborepo. Apenas `packages/bob-editor` é publicado no NPM. `apps/playground` é app Vite de teste, NÃO vai para o registry.
+
+---
+
+## 2. Stack obrigatória
+
+| Camada | Tecnologia |
+|---|---|
+| Linguagem | TypeScript ^5.0 (strict) |
+| UI | React ^18.0 \|\| ^19 (peerDep) |
+| Editor | `@monaco-editor/react` ^4.6, `monaco-editor` ^0.46 |
+| Pipeline | `unified` ^11, `remark-parse`, `remark-gfm`, `remark-math`, `remark-rehype`, `rehype-katex`, `rehype-highlight`, `rehype-sanitize`, `rehype-react`, `rehype-slug` |
+| Math/Diagrams | `katex` ^0.16, `mermaid` ^10, `highlight.js` ^11 |
+| Build da lib | `tsup` (dual ESM/CJS + d.ts + CSS) |
+| Build do playground | Vite ^5 |
+| Monorepo | pnpm workspaces + Turborepo |
+| Testes | Vitest, @testing-library/react, user-event, jest-dom, jsdom, expect-type, MSW, Playwright, axe-core, jest-axe |
+| Quality gates | `size-limit`, `publint`, `@arethetypeswrong/cli`, ESLint, Prettier |
+| Release | Changesets + GitHub Actions OIDC (`npm publish --provenance`) |
+| Node | >= 18 (matrix CI: 18/20/22) |
+
+Não substituir dependências sem autorização explícita.
+
+---
+
+## 3. Estrutura de pastas
 
 ```
-packages/markeditor/    ◀── PACOTE NPM PUBLICADO (única coisa que vai pro registry)
-apps/playground/        ◀── App Vite/React de teste e demo (private, NÃO publicado)
-apps/docs/              ◀── opcional: Storybook + Docusaurus
-examples/               snippets curtos lidos pelo README
-.changeset/             versionamento + changelog automático
-.github/workflows/      ci.yml, release.yml, size.yml
-turbo.json              pipeline build/test/lint/typecheck
+markdow-editor/
+├── package.json                       # raiz: scripts orchestration
+├── pnpm-workspace.yaml                # packages/*, apps/*
+├── turbo.json
+├── tsconfig.base.json
+├── .changeset/
+├── .github/workflows/                 # ci.yml, release.yml, size.yml
+├── packages/
+│   └── bob-editor/                    # ← PACOTE PUBLICADO
+│       ├── package.json               # name: "bob-editor"
+│       ├── tsup.config.ts
+│       ├── vitest.config.ts
+│       ├── size-limit.json
+│       ├── src/
+│       │   ├── index.ts               # entry público
+│       │   ├── BobEditor.tsx
+│       │   ├── components/            # Editor, Preview, Toolbar, Dialogs, ModeToggle
+│       │   ├── core/                  # pipeline, sanitize, EditorAPI, pluginManager, shortcutManager
+│       │   ├── plugins/               # builtin + types
+│       │   ├── themes/
+│       │   ├── hooks/
+│       │   ├── utils/
+│       │   ├── i18n/
+│       │   ├── styles/                # 'bob-editor/styles'
+│       │   └── types.ts
+│       └── tests/
+│           ├── unit/                  # *.test.ts
+│           ├── integration/           # *.test.tsx (RTL + user-event)
+│           ├── type/                  # *.test-d.ts
+│           └── fixtures/              # markdown samples
+├── apps/
+│   ├── playground/                    # ← Vite app, NÃO publicado
+│   │   ├── src/scenarios/             # rotas: /, /uncontrolled, /custom-toolbar, /with-plugins, /math, /mermaid, /alerts, /image-upload, /storage, /themes, /i18n, /export, /large-document, /readonly, /ssr-safe
+│   │   └── e2e/                       # Playwright contra o playground
+│   └── docs/                          # opcional: Storybook + Docusaurus
+└── examples/                          # snippets curtos (lidos pelo README)
 ```
 
-Workspaces: `packages/*`, `apps/*`. Playground consome lib via `"markeditor": "workspace:*"`.
+`packages/bob-editor` consome via `"bob-editor": "workspace:*"` (symlink pnpm + HMR).
 
 ---
 
-## 3. Estrutura interna de `packages/markeditor/src/`
+## 4. Comandos principais
 
+Executar a partir da raiz do monorepo.
+
+```bash
+# Instalação
+pnpm install
+
+# Dev
+pnpm --filter bob-editor dev          # build watch da lib
+pnpm --filter playground dev          # playground HMR
+
+# Build
+pnpm -r build                         # tudo (Turbo cuida da ordem)
+pnpm --filter bob-editor build        # só a lib
+
+# Testes
+pnpm --filter bob-editor test                  # vitest run
+pnpm --filter bob-editor test:watch
+pnpm --filter bob-editor test:coverage
+pnpm --filter bob-editor test:types            # vitest --typecheck
+pnpm --filter playground e2e                   # Playwright
+
+# Quality
+pnpm --filter bob-editor typecheck             # tsc --noEmit
+pnpm --filter bob-editor lint                  # eslint . --max-warnings 0
+pnpm --filter bob-editor size                  # size-limit
+pnpm --filter bob-editor publint               # lint do package.json
+pnpm --filter bob-editor attw                  # arethetypeswrong
+
+# Release
+pnpm changeset                                 # criar entry de versão
+pnpm changeset version                         # bump local
+pnpm changeset publish                         # publica (CI faz isso)
 ```
-index.ts            entry público — só re-exports
-MarkEditor.tsx      componente principal
-components/         Editor, Preview, Toolbar, Dialogs, ModeToggle
-core/               pipeline, sanitize, EditorAPI, pluginManager, shortcutManager
-plugins/            builtin (gfm, math, mermaid, alerts, footnotes, emoji, mentions, wordCount, toc)
-themes/             light, dark, auto + tipo MarkTheme
-hooks/              useDebounce, usePersistence, useShortcuts, etc.
-utils/              helpers de markdown, slug, debounce
-i18n/               strings en, pt-BR
-styles/             CSS bundlado (importável: 'markeditor/styles')
-types.ts            tipos públicos (MarkEditorProps, EditorAPI, MarkPlugin, etc.)
-```
 
-Tests em `packages/markeditor/tests/{unit,integration,type,fixtures}/`. E2E em `apps/playground/e2e/`.
+`prepublishOnly` roda: `build → test → typecheck → lint → publint → attw → size`. Não pular.
 
 ---
 
-## 4. Regras críticas (não negociáveis)
+## 5. Convenções de código
 
-### 4.1 TDD obrigatório
+### TypeScript
+- `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`
+- Tipos públicos vivem em `packages/bob-editor/src/types.ts` e são re-exportados pelo `index.ts`
+- Type-tests (`tests/type/*.test-d.ts`) garantem que props públicas não regridem — qualquer mudança em `BobEditorProps`, `EditorAPI`, `BobEditorPlugin`, `KeyboardShortcut`, `ToolbarButton` requer atualização desses testes
 
-Toda RF começa por teste falhando (Red → Green → Refactor). PR sem testes verdes não merge. Cobertura mínima: **≥80% linhas, ≥75% branches** (Vitest v8).
+### React
+- Componentes funcionais. Hooks customizados em `src/hooks/`
+- `forwardRef` para expor `BobEditorRef` (API imperativa: `getValue`, `setValue`, `focus`, `getMode`, `setMode`, `insertText`, `getSelection`, `exportAsHtml`, `exportAsMarkdown`)
+- Suportar modo controlado (`value` + `onChange`) e não-controlado (`defaultValue`) — mesma lógica vale para `mode`/`defaultMode`
+- Cleanup obrigatório em `useEffect` para listeners, debounces, plugin `onMount` returns
 
-### 4.2 Nada de UI de demo no pacote publicado
+### Estilo
+- CSS via CSS variables (`--mde-*`). Override por consumidor é via CSS, não por prop
+- `sideEffects: ["**/*.css"]` no package.json — JS é puro
+- CSS bundlado distribuído em `dist/styles.css`, importável como `bob-editor/styles`
 
-`packages/markeditor` exporta **apenas** `<MarkEditor />`, hooks, tipos, plugins, CSS. Showcase, controles de demo, theme switcher, rotas — tudo vai em `apps/playground`. Não acoplar Tailwind ou React Router à lib.
+### Plugins
+- Interface `BobEditorPlugin` formal (ver PRD §5.5.1 e §9)
+- Built-in ativos por padrão: `gfm`, `math`, `mermaid`, `alerts`, `footnotes`
+- Built-in opt-in: `emoji`, `mentions`, `wordCount`, `tableOfContents`
+- Plugins exportados via subpath: `bob-editor/plugins/emoji`, etc.
 
-### 4.3 Segurança XSS
-
-`rehype-sanitize` ativo **por padrão** (schema GitHub). Atributos `on*` removidos. `javascript:` bloqueado. `data:` só para imagens (configurável). Prop `sanitize` permite customizar mas nunca desligar silenciosamente.
-
-### 4.4 Lazy load
-
-Monaco, KaTeX, Mermaid carregam em chunks separados. Bundle inicial sem Monaco deve ficar **<80KB gzip**. Com Monaco lazy: **<500KB gzip**. `size-limit` enforced em CI — quebra de limite trava PR.
-
-### 4.5 Tree-shaking
-
-`sideEffects: ["**/*.css"]` no `package.json`. Plugins opt-in não devem entrar no bundle se não importados. Subpath exports (`markeditor/plugins/emoji`) para imports granulares.
-
-### 4.6 Pipeline unificado
-
-Toda renderização passa por `core/pipeline.ts` baseado em `unified`. Ordem fixa: parse → gfm → math → user remark plugins → rehype → katex → highlight → sanitize → user rehype plugins → react. **Memoizar** output do pipeline. Debounce **150ms** (configurável via `previewDebounceMs`).
-
-### 4.7 Controlado vs não-controlado
-
-Componente suporta ambos. `value`+`onChange` = controlado. `defaultValue` = não-controlado. Mesma lógica para `mode`/`defaultMode`. Se `storage` ativo + `value` passado, `value` ganha.
-
-### 4.8 Atalhos cross-platform
-
-Usar `Mod+` na interface de `KeyboardShortcut.keys` — resolve em `Cmd` no Mac, `Ctrl` no Win/Linux. Testar ambos.
+### Atalhos
+- Sintaxe `Mod+B` (Mod = Cmd no Mac, Ctrl em Windows/Linux)
+- Cada atalho default tem `id` estável — sobrescrever ou desabilitar por `id`
 
 ---
 
-## 5. Comandos essenciais
+## 6. Testes (TDD obrigatório)
 
-Rodar da raiz (Turborepo orquestra):
+**Filosofia:** toda RF começa por teste falhando antes de código de produção. Sem exceção.
 
-| Comando                                         | O que faz                                |
-| ----------------------------------------------- | ---------------------------------------- |
-| `pnpm install`                                  | Instala dependências em todos workspaces |
-| `pnpm -r build`                                 | Builda todos os pacotes                  |
-| `pnpm -r test`                                  | Roda testes (Vitest run)                 |
-| `pnpm -r typecheck`                             | `tsc --noEmit`                           |
-| `pnpm -r lint`                                  | ESLint `--max-warnings 0`                |
-| `pnpm --filter markeditor build`                | Builda só o pacote                       |
-| `pnpm --filter playground dev`                  | Sobe playground em dev                   |
-| `pnpm --filter playground exec playwright test` | E2E                                      |
+**Pirâmide:**
+1. **Unit** (Vitest) — pipeline puro, sanitize, helpers, plugin built-ins, debounce, shortcut/plugin managers
+2. **Integration** (RTL + user-event) — `<BobEditor />`, toolbar, modais, atalhos, toggle, persistência, controlado vs não-controlado
+3. **Type** (`expect-type`) — props públicas, `EditorAPI`, plugin interface
+4. **E2E** (Playwright em `apps/playground`) — digitação, toggle, atalhos cross-OS, upload mockado (MSW), export
+5. **A11y** — `jest-axe` (unit) e `@axe-core/playwright` (e2e). Zero violações WCAG 2.1 AA
+6. **Bench** (`vitest bench`) — render em doc 10k linhas. Falha CI se > 1.2× baseline
 
-Pré-publish (em `packages/markeditor`): `prepublishOnly` roda `build + test + typecheck + lint + publint + attw + size`.
+**Cobertura mínima:** ≥ 80% linhas, ≥ 75% branches (Vitest v8). PR só merge com testes verdes.
 
----
-
-## 6. Convenções de código
-
-- **TypeScript estrito.** Sem `any` em código de produção. Tipos públicos em `types.ts`, exportados de `index.ts`.
-- **Componentes**: PascalCase, um por arquivo, mesmo nome do arquivo (`Toolbar.tsx` → `export function Toolbar`).
-- **Hooks**: `use*` prefix, em `hooks/`.
-- **Plugins built-in**: arquivo único em `plugins/{nome}.ts`, export named (`export const emojiPlugin: MarkmdPlugin`).
-- **CSS**: tudo via CSS variables `--mde-*`. Tipografia e cores sobrescritíveis. Sem CSS-in-JS.
-- **Testes**: `*.test.ts` (unit), `*.test.tsx` (integration), `*.test-d.ts` (type-level com `expect-type`/`tsd`).
-- **i18n**: chaves em `i18n/{locale}.ts`. Fallback sempre `en`. Plugins podem injetar strings via `plugin.i18n`.
+**Obrigatório por categoria** (ver PRD §6.7.4):
+- Pipeline: cada feature de RF-5.3.2 com fixture in/out (`tests/fixtures/`)
+- Sanitização: bateria do OWASP XSS Filter Cheat Sheet (`<script>`, `onerror`, `javascript:`, `data:` malicioso)
+- Toolbar: cada botão default + custom button + hide/override
+- Atalhos: cada atalho de RF-5.6.1 + override + disable + cross-platform
+- Plugins: cada lifecycle hook + ordem de execução + cleanup
+- Persistência: mount com storage, autoSave debounce, restore, conflito controlado vs storage
+- Imagens: upload sucesso/falha (rollback), drag-drop, paste
+- Export: HTML, Markdown, download, print
+- Tema: light, dark, auto (mock `matchMedia`), customizado
+- i18n: trocar locale em runtime, fallback `en`
+- A11y: axe em edit, preview, cada modal, cada tema
 
 ---
 
-## 7. API pública — pontos de atenção
+## 7. Restrições críticas (PRD)
 
-Manter estável após v1.0 (SemVer estrito):
+### Não-objetivos v1.0 (NÃO implementar)
+- WYSIWYG verdadeiro
+- Split view (edit + preview simultâneo)
+- Colaboração em tempo real (Y.js/CRDT)
+- Sync com backend
+- Plugins remotos carregados de URL
+- SSR completo do preview (Monaco é client-only — fallback de textarea em SSR)
 
-- `MarkEditorProps` (ver PRD §8.1)
-- `EditorAPI` (ver PRD §5.5.3)
-- `MarkPlugin` (ver PRD §5.5.1)
-- `ToolbarButton`, `ToolbarConfig`, `KeyboardShortcut`, `MarkTheme`, `I18nMessages`
-- `MarkEditorRef` (API imperativa via `useRef`)
+### Performance (alvos não-negociáveis)
+- Bundle gzip sem Monaco: < 80 KB
+- Bundle gzip com Monaco lazy: < 500 KB
+- Re-render preview em 10k linhas: < 300 ms
+- Debounce preview: 150 ms (configurável via `previewDebounceMs`)
+- Monaco lazy load: < 500 ms em 4G
 
-Mudanças nesses contratos = **major version**. Type-tests (`tests/type/`) protegem contra regressão.
+`size-limit` enforced em CI bloqueia PR que estoure.
 
----
+### Segurança
+- `rehype-sanitize` com schema GitHub ativo por padrão
+- Atributos `on*` sempre removidos
+- `javascript:` URLs sempre bloqueadas
+- `data:` URLs apenas para imagens (configurável)
+- `allowHtml` permite HTML inline mas **sempre sanitizado**
 
-## 8. Fora de escopo na v1.0 (não implementar sem aprovação)
+### Acessibilidade
+- WCAG 2.1 AA — zero violações
+- Toolbar navegável por Tab/Arrow
+- `aria-label`, `aria-pressed`, `aria-disabled` em botões
+- Focus trap em modais
+- `aria-live` para mudança de modo
+- Foco visível em todos os interativos
 
-| Feature                       | Razão                                | Alvo        |
-| ----------------------------- | ------------------------------------ | ----------- |
-| Split view                    | Decisão de produto: toggle escolhido | v1.1        |
-| WYSIWYG verdadeiro            | Complexidade dobraria escopo         | v2.0        |
-| Colaboração tempo real (Y.js) | Requer backend                       | v2.0+       |
-| Plugins remotos via URL       | Risco segurança                      | Talvez v1.2 |
-| SSR completo do preview       | Monaco client-only                   | v1.1        |
-| Export PDF nativo             | Libs pesadas                         | v1.2        |
-| AI-assisted writing           | Não é prioridade                     | v1.2+       |
-
-Se usuário pedir algo desta lista, sinalizar fora de escopo da v1 antes de implementar.
-
----
-
-## 9. Publicação NPM — checklist de identidade
-
-- Nome: `markeditor` · License: `MIT` · Versão via Changesets
-- `exports` map com subpaths (`.`, `./styles`, `./plugins`, `./plugins/*`, `./package.json`)
-- `peerDependencies`: React 18 || 19
-- Provenance: `npm publish --provenance` via GitHub Actions OIDC
-- `publint` + `attw` zero warnings antes de publicar
-- Tarball: só `dist/`, `README.md`, `CHANGELOG.md`, `LICENSE` (whitelist via `files`)
-
----
-
-## 10. Roadmap por fases (resumo)
-
-| Fase | Entregável          | Foco                                                    |
-| ---- | ------------------- | ------------------------------------------------------- |
-| 0    | Monorepo + CI verde | Setup, tooling, Changesets, size-limit                  |
-| 1    | v0.1.0 — MVP        | Pipeline + Monaco + toggle + temas básicos              |
-| 2    | v0.2.0              | Toolbar completa + atalhos + modais + i18n              |
-| 3    | v0.3.0              | Math + Mermaid + Alerts + code highlight                |
-| 4    | v0.4.0              | Sistema de plugins + EditorAPI + built-ins              |
-| 5    | v0.5.0              | Upload imagem + storage + export + temas custom         |
-| 6    | **v1.0.0**          | A11y AA + perf + docs + deploy playground + publish NPM |
-
-Detalhes por tarefa em `PRD.md §11`.
+### Pacote NPM
+- `name`: `bob-editor` (exato — reservar no registry)
+- `license`: MIT
+- `exports` map completo (ver PRD §6.6.2) — subpaths `./styles`, `./plugins`, `./plugins/*`
+- Dual ESM + CJS + types + source maps
+- `peerDependencies`: `react`, `react-dom` (`^18 || ^19`)
+- `sideEffects: ["**/*.css"]`
+- `files`: whitelist `["dist", "README.md", "CHANGELOG.md", "LICENSE"]` (sem `.npmignore`)
+- Publicação com `--provenance --access public` via OIDC
 
 ---
 
-## 11. Onde olhar primeiro ao receber tarefa
+## 8. Fases de implementação (PRD §11)
 
-1. **Sempre** abrir `PRD.md` na seção do RF mencionado (busca por `RF-5.x.y`).
-   1.1. Tarefa toca UI/estilo? **Abrir `DESIGN.md`** — usar tokens (`{colors.*}`, `{typography.*}`, `{spacing.*}`, `{rounded.*}`, `{component.*}`) ao invés de hex/valores inline. Cream canvas + coral + dark navy é a trindade — não introduzir 4ª cor.
-2. Verificar se há teste existente em `tests/` cobrindo o comportamento — se sim, rodar antes de mexer.
-3. Mudou contrato público (props, EditorAPI, plugin interface)? Atualizar type-tests + adicionar changeset.
-4. Mudou bundle? Conferir `size-limit.json` e rodar `pnpm size`.
-5. Mudou pipeline ou sanitize? Bateria XSS de `tests/unit/sanitize.test.ts` é obrigatória.
+Cada fase é entregável independente:
+
+- **Fase 0** — Setup monorepo + infra (pnpm, Turbo, tsup, Vitest, Playwright, Changesets, CI/CD, size-limit, publint, attw)
+- **Fase 1** — MVP: pipeline básico + Monaco lazy + toggle edit/preview + temas light/dark → **v0.1.0**
+- **Fase 2** — Toolbar completa + atalhos + modais + i18n → **v0.2.0**
+- **Fase 3** — Math, Mermaid, alerts, footnotes, code blocks com highlight + copy → **v0.3.0**
+- **Fase 4** — Sistema de plugins formal + built-ins (emoji, mentions, wordCount, tableOfContents) → **v0.4.0**
+- **Fase 5** — Upload de imagens, drag-drop, paste, persistência localStorage, export HTML/MD, sticky toolbar, temas custom → **v0.5.0**
+- **Fase 6** — Polish, a11y audit, perf audit, docs, Storybook, e2e, deploy playground, publish → **v1.0.0**
+
+Antes de iniciar fase nova, validar contra critérios de aceitação da fase anterior.
 
 ---
 
-## 12. Padrões de mercado adotados como referência
+## 9. Definition of Done (v1.0 — PRD §12)
 
-- **tiptap, lexical, mdxeditor, codemirror**: separação lib pública vs app de demo
-- **GitHub GFM**: spec de alerts/callouts (`> [!NOTE]` etc.) e schema de sanitização
-- **StackEdit/HackMD**: UX do toggle edit↔preview
-- **Obsidian**: design do sistema de plugins
-- **Monaco**: editor (mesmo motor do VS Code)
+1. Todos RF-5.x implementados
+2. Todos RNF (§6) atendidos, incluindo §6.6 (NPM) e §6.7 (Testes)
+3. Cobertura ≥ 80% linhas / 75% branches
+4. `tsc --noEmit` zero erros em todos os workspaces
+5. `eslint . --max-warnings 0` limpo
+6. `publint` + `attw` zero warnings
+7. `size-limit` passa todos limites
+8. Docs completas (README pacote + README raiz + Storybook)
+9. Playground cobre todos cenários §7.5 e está deployado
+10. 4+ exemplos em `examples/`
+11. Axe zero violações AA (unit + e2e)
+12. Playwright cobre digitar, toggle, atalhos, upload, export
+13. Bundle dentro dos limites
+14. Type-tests garantem estabilidade da API pública
+15. CI verde em matrix Node 18/20/22 × React 18/19
+16. Publicado no NPM com ESM + CJS + types + CSS + provenance
+17. Changesets configurado
+18. LICENSE, CHANGELOG, README no tarball
+
+---
+
+## 10. Riscos conhecidos (PRD §14)
+
+| Risco | Mitigação |
+|---|---|
+| Monaco pesado e SSR-incompatível | Lazy load + fallback de textarea em SSR |
+| KaTeX/Mermaid quebram em conteúdo malformado | Catch erros, exibir mensagem inline, não derrubar o preview inteiro |
+| Pipeline `unified` é assíncrono | `useEffect` + estado, loading sutil |
+| Conflitos de atalho com SO | Atalhos conservadores + permitir override |
+| Sanitização agressiva quebra conteúdo legítimo | Schema GitHub customizável |
+| Bundle escala com plugins | Tree-shaking + plugins lazy |
+| Memory leaks com unmount frequente | Cleanup em todo hook e plugin `onMount` |
+
+---
+
+## 11. Pontos de atenção para o agente
+
+- **Não criar arquivos fora de `packages/bob-editor` ou `apps/playground` sem motivo claro.** Esta é uma lib publicável — escopo importa.
+- **Não vazar TailwindCSS, React Router ou outras escolhas do playground para a lib.** O playground é app de demo, não tem influência no bundle do pacote.
+- **Não publicar nada do `apps/`.** Apenas `packages/bob-editor` vai pro NPM.
+- **TDD não é opcional** — se for adicionar feature de RF, escrever teste falhando primeiro.
+- **Nome do pacote é `bob-editor`** (PRD evoluiu de `bobmd`). Em qualquer divergência no PRD, esse é o nome correto.
+- **Componente principal é `<BobEditor />`** — não renomear sem aprovação.
+- **Pipeline é assíncrono** — `unified().process()` retorna Promise. Não tratar como síncrono.
+- **Monaco é client-only** — qualquer renderização SSR precisa de fallback (textarea ou skeleton).
+- **CSS variables são o contrato visual** — toda customização visual passa por `--mde-*`. Não usar styled-components, emotion, ou Tailwind dentro da lib.
+- **Antes de marcar tarefa completa, rodar `pnpm -r build && pnpm -r test && pnpm -r typecheck && pnpm -r lint`** localmente.
+
+---
+
+## 12. Referências
+
+- PRD canônico: `./PRD.md` (v1.1)
+- AGENTS.md: contrato análogo para agentes não-Claude
+- CommonMark: https://spec.commonmark.org/
+- GFM: https://github.github.com/gfm/
+- unified: https://unifiedjs.com/
+- Monaco: https://microsoft.github.io/monaco-editor/
+- WCAG 2.1: https://www.w3.org/TR/WCAG21/

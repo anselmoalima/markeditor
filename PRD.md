@@ -1,21 +1,21 @@
-# PRD — markmd: Editor Markdown React (pacote NPM)
+# PRD — BobEditor: Editor Markdown React (pacote NPM)
 
 **Versão:** 1.1
 **Data:** Maio de 2026
 **Status:** Pronto para implementação
 **Autor:** [Você]
-**Nome do pacote NPM:** `markmd`
-**Componente principal:** `<MarkmdEditor />`
+**Nome do pacote NPM:** `bob-editor`
+**Componente principal:** `<BobEditor />`
 **Stack-alvo:** React 18+ · TypeScript · Monaco Editor · unified/remark/rehype
-**Distribuição:** Monorepo (pnpm workspaces) — `packages/markmd` publicado no NPM; `apps/playground` app de teste separado (NÃO publicado)
+**Distribuição:** Monorepo (pnpm workspaces) — `packages/bob-editor` publicado no NPM; `apps/playground` app de teste separado (NÃO publicado)
 
 ---
 
 ## 1. Sumário Executivo
 
-Desenvolver `markmd` — componente React reutilizável e configurável que oferece um editor Markdown completo, comparável aos editores mais usados do mercado (StackEdit, HackMD, Obsidian, Typora). O componente deve permitir alternar entre modo de **edição** (com Monaco Editor) e **preview** (HTML renderizado), suportar a especificação completa do Markdown estendido (GFM + math + mermaid + alerts), expor um sistema de plugins para extensibilidade, e ser distribuído como **pacote NPM** React genérico configurável via props.
+Desenvolver `bob-editor` — componente React reutilizável e configurável que oferece um editor Markdown completo, comparável aos editores mais usados do mercado (StackEdit, HackMD, Obsidian, Typora). O componente deve permitir alternar entre modo de **edição** (com Monaco Editor) e **preview** (HTML renderizado), suportar a especificação completa do Markdown estendido (GFM + math + mermaid + alerts), expor um sistema de plugins para extensibilidade, e ser distribuído como **pacote NPM** React genérico configurável via props.
 
-**Entrega final:** pacote NPM `markmd` publicável no registry público, com tipos TypeScript completos, dual ESM/CJS, tree-shaking, documentação, exemplos, **playground React separado** para testes práticos, suíte de testes TDD (unit + integration + e2e + a11y + bundle-size + type-tests).
+**Entrega final:** pacote NPM `bob-editor` publicável no registry público, com tipos TypeScript completos, dual ESM/CJS, tree-shaking, documentação, exemplos, **playground React separado** para testes práticos, suíte de testes TDD (unit + integration + e2e + a11y + bundle-size + type-tests).
 
 **Estratégia de UI de testes:** A UI de playground/demo **NÃO faz parte** do pacote NPM publicado. Vive em `apps/playground` dentro do monorepo, conforme padrão de mercado (tiptap, lexical, mdxeditor). Razões: bundle limpo, separação de concerns, tree-shaking efetivo, demo pode ser deployado em Vercel/Netlify de forma independente.
 
@@ -47,7 +47,7 @@ Construir um componente que combine o melhor de cada concorrente: a experiência
 
 ### 3.1 Objetivos (In-scope)
 
-1. Componente React único e configurável: `<MarkmdEditor />`
+1. Componente React único e configurável: `<BobEditor />`
 2. Suporte completo a Markdown estendido (CommonMark + GFM + math + mermaid + alerts + footnotes)
 3. Modo Toggle: usuário alterna entre **edição** e **preview** (sem split view)
 4. Monaco Editor como engine de edição com syntax highlight de Markdown
@@ -81,7 +81,7 @@ Construir um componente que combine o melhor de cada concorrente: a experiência
 
 | Persona                  | Quem é                                   | O que precisa                                                          |
 | ------------------------ | ---------------------------------------- | ---------------------------------------------------------------------- |
-| **Dev de produto**       | Desenvolve um CMS/blog/SaaS em React     | Importar `<MarkmdEditor />` e ter um editor funcional em minutos       |
+| **Dev de produto**       | Desenvolve um CMS/blog/SaaS em React     | Importar `<BobEditor />` e ter um editor funcional em minutos          |
 | **Dev de plataforma**    | Constrói uma ferramenta interna complexa | Customizar toolbar, registrar plugins e atalhos específicos do domínio |
 | **Dev de docs técnicas** | Sistema de documentação interna          | Suporte a math, mermaid, code blocks com highlight, footnotes          |
 | **Usuário final**        | Pessoa escrevendo o conteúdo             | Editor responsivo, atalhos familiares, preview rápido e fiel           |
@@ -256,7 +256,7 @@ interface ToolbarButton {
 **RF-5.5.1** Plugin é um objeto que implementa:
 
 ```typescript
-interface MarkmdPlugin {
+interface BobEditorPlugin {
   name: string; // identificador único, ex: 'plugin-emoji'
   version?: string;
 
@@ -287,7 +287,7 @@ interface MarkmdPlugin {
 **RF-5.5.2** Plugins são passados via prop `plugins`:
 
 ```typescript
-<MarkmdEditor plugins={[emojiPlugin, mentionsPlugin, taskTrackerPlugin]} />
+<BobEditor plugins={[emojiPlugin, mentionsPlugin, taskTrackerPlugin]} />
 ```
 
 **RF-5.5.3** Plugins têm acesso ao **EditorAPI** (objeto imperativo):
@@ -470,7 +470,7 @@ autoSaveInterval?: number; // ms, default: 1000
 **RF-5.10.2** Tema customizado via objeto:
 
 ```typescript
-interface MarkmdTheme {
+interface BobMdTheme {
   editor: {
     background: string;
     foreground: string;
@@ -549,7 +549,7 @@ interface MarkmdTheme {
 
 **RNF-6.6.1 — Identidade no registry:**
 
-- `name`: `markmd`
+- `name`: `bob-editor`
 - `version`: SemVer estrito, gerenciado por **Changesets**
 - `license`: `MIT`
 - `repository`, `bugs`, `homepage` apontando para o GitHub repo
@@ -559,7 +559,7 @@ interface MarkmdTheme {
 
 ```json
 {
-  "name": "markmd",
+  "name": "bob-editor",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
@@ -632,9 +632,9 @@ Monaco, KaTeX, Mermaid: avaliar `optionalPeerDependencies` para consumidores que
 **RNF-6.6.7 — Consumo do pacote (DX-alvo):**
 
 ```tsx
-import { MarkmdEditor } from 'markmd';
-import 'markmd/styles';
-import { emojiPlugin } from 'markmd/plugins/emoji';
+import { BobEditor } from 'bob-editor';
+import 'bob-editor/styles';
+import { emojiPlugin } from 'bobmd/plugins/emoji';
 ```
 
 - Import principal sem side effects (exceto CSS via subpath explícito)
@@ -662,7 +662,7 @@ import { emojiPlugin } from 'markmd/plugins/emoji';
 | Camada                | Ferramenta                                                                                   | Escopo                                                                                                                 |
 | --------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Unit                  | **Vitest**                                                                                   | Funções puras: pipeline, sanitize, helpers de markdown, shortcutManager, debounce, plugins built-in                    |
-| Component/Integration | **@testing-library/react** + **@testing-library/user-event** + **@testing-library/jest-dom** | Comportamento do `<MarkmdEditor />`, toolbar, modais, atalhos, modo toggle, persistência, controlado vs não-controlado |
+| Component/Integration | **@testing-library/react** + **@testing-library/user-event** + **@testing-library/jest-dom** | Comportamento do `<BobEditor />`, toolbar, modais, atalhos, modo toggle, persistência, controlado vs não-controlado |
 | Type-level            | **expect-type** ou **tsd**                                                                   | Garantir tipos públicos não regridem (props, EditorAPI, plugin interface)                                              |
 | Snapshot              | Vitest inline snapshots                                                                      | Output HTML do pipeline para fixtures de markdown                                                                      |
 | E2E                   | **Playwright** (no `apps/playground`)                                                        | Fluxos reais: digitar, alternar modo, atalhos cross-OS, upload mockado, export                                         |
@@ -776,7 +776,7 @@ describe('mode toggle', () => {
 ### 7.2 Estrutura de pastas (Monorepo pnpm workspaces)
 
 ```
-markmd/                                  # raiz do monorepo
+bobmd/                                  # raiz do monorepo
 ├── package.json                         # raiz: scripts orchestration, devDeps compartilhados
 ├── pnpm-workspace.yaml                  # workspaces: packages/*, apps/*
 ├── turbo.json                           # Turborepo: pipeline build/test/lint
@@ -792,8 +792,8 @@ markmd/                                  # raiz do monorepo
 ├── README.md
 │
 ├── packages/
-│   └── markmd/                          # ◀── PACOTE NPM PUBLICADO
-│       ├── package.json                 # name: "markmd", exports map, peerDeps
+│   └── bobmd/                          # ◀── PACOTE NPM PUBLICADO
+│       ├── package.json                 # name: "bob-editor", exports map, peerDeps
 │       ├── tsconfig.json
 │       ├── tsup.config.ts               # build dual ESM/CJS + d.ts + CSS
 │       ├── vitest.config.ts
@@ -802,7 +802,7 @@ markmd/                                  # raiz do monorepo
 │       ├── CHANGELOG.md                 # gerado por changesets
 │       ├── src/
 │       │   ├── index.ts                 # entry público (re-exports)
-│       │   ├── MarkmdEditor.tsx
+│       │   ├── BobEditor.tsx
 │       │   ├── components/              # Editor, Preview, Toolbar, Dialogs, ModeToggle
 │       │   ├── core/                    # pipeline, sanitize, EditorAPI, pluginManager, shortcutManager
 │       │   ├── plugins/                 # builtin + types
@@ -810,7 +810,7 @@ markmd/                                  # raiz do monorepo
 │       │   ├── hooks/
 │       │   ├── utils/
 │       │   ├── i18n/
-│       │   ├── styles/                  # CSS bundlado (importável: 'markmd/styles')
+│       │   ├── styles/                  # CSS bundlado (importável: 'bob-editor/styles')
 │       │   └── types.ts                 # tipos públicos
 │       ├── tests/
 │       │   ├── unit/                    # *.test.ts — Vitest
@@ -826,7 +826,7 @@ markmd/                                  # raiz do monorepo
 │   │   ├── index.html
 │   │   ├── src/
 │   │   │   ├── main.tsx
-│   │   │   ├── App.tsx                  # showcase interativo do <MarkmdEditor />
+│   │   │   ├── App.tsx                  # showcase interativo do <BobEditor />
 │   │   │   ├── scenarios/               # cenários: básico, custom toolbar, plugins, math, mermaid, upload
 │   │   │   ├── components/              # controles laterais (props, toggles, theme switch)
 │   │   │   └── styles/
@@ -851,8 +851,8 @@ markmd/                                  # raiz do monorepo
 
 **Decisão arquitetural — UI no pacote NPM:** ❌ NÃO incluída.
 
-- `packages/markmd` exporta apenas `<MarkmdEditor />`, hooks, tipos, plugins, CSS.
-- `apps/playground` é app Vite + React consumindo `markmd` via workspace symlink (`"markmd": "workspace:*"`).
+- `packages/bob-editor` exporta apenas `<BobEditor />`, hooks, tipos, plugins, CSS.
+- `apps/playground` é app Vite + React consumindo `bob-editor` via workspace symlink (`"bob-editor": "workspace:*"`).
 - Razões (alinhadas com padrão de mercado — tiptap, lexical, mdxeditor, codemirror):
   1. **Bundle limpo:** zero código de demo no pacote final
   2. **Separação de concerns:** lib não acopla escolhas de UI de demo (rotas, controles, theme switcher)
@@ -864,7 +864,7 @@ markmd/                                  # raiz do monorepo
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      <MarkmdEditor />                     │
+│                      <BobEditor />                     │
 │                                                             │
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │                  Toolbar                            │   │
@@ -934,14 +934,14 @@ return result.result; // React.ReactElement
 
 ### 7.5 Playground App (`apps/playground`)
 
-**Propósito:** Aplicação React standalone para testar o `<MarkmdEditor />` em cenários reais. **NÃO publicada no NPM.** Usada por devs do pacote + base para e2e Playwright + deploy público para demo.
+**Propósito:** Aplicação React standalone para testar o `<BobEditor />` em cenários reais. **NÃO publicada no NPM.** Usada por devs do pacote + base para e2e Playwright + deploy público para demo.
 
 **Stack:**
 
 - Vite + React + TypeScript
 - TailwindCSS (escolha de demo — não vaza pro pacote)
 - React Router (cenários como rotas)
-- Consome `markmd` via `"markmd": "workspace:*"` (symlink pnpm)
+- Consome `bob-editor` via `"bob-editor": "workspace:*"` (symlink pnpm)
 
 **Cenários cobertos (rotas):**
 | Rota | Cenário |
@@ -978,7 +978,7 @@ return result.result; // React.ReactElement
 ### 8.1 Props (interface completa)
 
 ```typescript
-interface MarkmdEditorProps {
+interface BobEditorProps {
   // ───── Conteúdo ─────
   /** Valor controlado do markdown */
   value?: string;
@@ -1014,7 +1014,7 @@ interface MarkmdEditorProps {
   enableWordWrap?: boolean;
 
   // ───── Plugins ─────
-  plugins?: MarkmdPlugin[];
+  plugins?: BobEditorPlugin[];
 
   // ───── Atalhos ─────
   shortcuts?: {
@@ -1029,7 +1029,7 @@ interface MarkmdEditorProps {
   autoSaveInterval?: number;
 
   // ───── Tema ─────
-  theme?: 'light' | 'dark' | 'auto' | MarkmdTheme;
+  theme?: 'light' | 'dark' | 'auto' | BobmdTheme;
 
   // ───── Layout ─────
   height?: string | number;
@@ -1076,9 +1076,9 @@ interface MarkmdEditorProps {
 ### 8.2 API imperativa (via ref)
 
 ```typescript
-const ref = useRef<MarkmdEditorRef>(null);
+const ref = useRef<BobEditorRef>(null);
 
-<MarkmdEditor ref={ref} />
+<BobEditor ref={ref} />
 
 // Métodos disponíveis no ref:
 ref.current?.getValue();
@@ -1111,9 +1111,9 @@ ref.current?.exportAsMarkdown();
 ### 9.1 Exemplo: plugin de emojis
 
 ```typescript
-import { MarkmdPlugin } from 'markmd';
+import { BobEditorPlugin } from 'bob-editor';
 
-export const emojiPlugin: MarkmdPlugin = {
+export const emojiPlugin: BobEditorPlugin = {
   name: 'emoji',
   version: '1.0.0',
 
@@ -1151,7 +1151,7 @@ export const emojiPlugin: MarkmdPlugin = {
 ```typescript
 export const mentionsPlugin = (options: {
   fetchUsers: (query: string) => Promise<User[]>;
-}): MarkmdPlugin => ({
+}): BobEditorPlugin => ({
   name: 'mentions',
 
   remarkPlugins: [[remarkMention, options]],
@@ -1203,9 +1203,9 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 
 **Objetivo:** Fundação NPM-ready antes de uma linha de feature.
 
-- [ ] `pnpm-workspace.yaml` + `packages/markmd` + `apps/playground`
+- [ ] `pnpm-workspace.yaml` + `packages/bob-editor` + `apps/playground`
 - [ ] Turborepo (`turbo.json`) com pipeline build/test/lint/typecheck
-- [ ] `packages/markmd/package.json` com `exports` map completo, `peerDeps`, `files`, `sideEffects`
+- [ ] `packages/bob-editor/package.json` com `exports` map completo, `peerDeps`, `files`, `sideEffects`
 - [ ] tsup configurado para dual ESM/CJS + d.ts + CSS bundling
 - [ ] Vitest configurado (jsdom env, coverage v8, setup file com `@testing-library/jest-dom`)
 - [ ] Playwright configurado em `apps/playground/e2e`
@@ -1213,7 +1213,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 - [ ] size-limit, publint, attw, axe-core, jest-axe, MSW instalados
 - [ ] ESLint + Prettier + TS strict compartilhados via `tsconfig.base.json`
 - [ ] GitHub Actions: `ci.yml` (test+lint+typecheck+size), `release.yml` (changesets+publish+provenance)
-- [ ] Playground Vite app esqueleto consumindo `markmd` via workspace
+- [ ] Playground Vite app esqueleto consumindo `bob-editor` via workspace
 - [ ] Smoke test: pacote builda + importa no playground + roda
 
 **Entregável:** Monorepo verde no CI, pronto para TDD.
@@ -1224,7 +1224,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 
 - [ ] Testes unit do pipeline markdown (fixtures de RF-5.3.2)
 - [ ] Pipeline básico: remark + remark-gfm + rehype + rehype-sanitize + rehype-react
-- [ ] Componente `<MarkmdEditor>` esqueleto (teste de mount primeiro)
+- [ ] Componente `<BobEditor>` esqueleto (teste de mount primeiro)
 - [ ] Integração com Monaco Editor (lazy load)
 - [ ] Testes integration: toggle edit/preview (RTL + user-event)
 - [ ] Toggle edit/preview funcional
@@ -1265,7 +1265,7 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 
 ### Fase 4 — Sistema de Plugins (Semana 5)
 
-- [ ] Interface formal `MarkmdPlugin`
+- [ ] Interface formal `BobEditorPlugin`
 - [ ] `pluginManager.ts` com lifecycle
 - [ ] `EditorAPI` completa
 - [ ] Hooks: onBeforeParse, onAfterRender, onChange, onMount
@@ -1307,9 +1307,9 @@ Modal exibido com `Ctrl/Cmd+?` lista todos os atalhos ativos, agrupados por cate
 - [ ] Workflow de release: changesets + `npm publish --provenance` via OIDC
 - [ ] README com badges (npm, bundlephobia, CI, coverage), instalação, quickstart, recipes, link do playground
 - [ ] LICENSE (MIT), CHANGELOG.md inicial
-- [ ] Publicação `markmd@1.0.0` no NPM registry
+- [ ] Publicação `bobmd@1.0.0` no NPM registry
 
-**Entregável:** v1.0.0 — `npm install markmd` funcional, demo público no ar.
+**Entregável:** v1.0.0 — `npm install bob-editor` funcional, demo público no ar.
 
 ---
 
@@ -1332,7 +1332,7 @@ Para considerar a v1.0 completa:
 13. ✅ Bundle size dentro dos limites (RF-6.1, RF-6.5)
 14. ✅ Type-tests garantem estabilidade da API pública
 15. ✅ CI/CD verde em PR e main; matrix Node 18/20/22 × React 18/19
-16. ✅ Publicação `markmd` no NPM com ESM + CJS + types + CSS + provenance
+16. ✅ Publicação `bob-editor` no NPM com ESM + CJS + types + CSS + provenance
 17. ✅ Changesets configurado e funcionando para releases futuras
 18. ✅ LICENSE (MIT), CHANGELOG.md, README.md no tarball publicado
 
@@ -1495,7 +1495,7 @@ Para considerar a v1.0 completa:
 
 ## 18. Fluxo de Publicação NPM
 
-### 18.1 Scripts obrigatórios em `packages/markmd/package.json`
+### 18.1 Scripts obrigatórios em `packages/bob-editor/package.json`
 
 ```json
 {
@@ -1550,7 +1550,7 @@ jobs:
 
 ### 18.3 Checklist pré-1ª publicação
 
-- [ ] Reservar nome `markmd` no NPM (verificar disponibilidade: `npm view markmd`)
+- [ ] Reservar nome `bob-editor` no NPM (verificar disponibilidade: `npm view bobmd`)
 - [ ] Conta NPM com 2FA habilitado
 - [ ] `NPM_TOKEN` configurado em GitHub Secrets (granular token, somente publish do pacote)
 - [ ] GitHub repo público com Trusted Publisher (OIDC) configurado no NPM

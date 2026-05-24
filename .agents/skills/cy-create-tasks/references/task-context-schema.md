@@ -23,11 +23,9 @@ Valid `status` values:
 ## File Naming
 
 Task files must match the pattern `task_\d+\.md` with zero-padded numbers:
-
 - `task_01.md`, `task_02.md`, `task_10.md`, `task_99.md`
 
 The leading underscore prefix is reserved for meta documents:
-
 - `_prd.md` — Product Requirements Document
 - `_techspec.md` — Technical Specification
 - `_tasks.md` — Master task list
