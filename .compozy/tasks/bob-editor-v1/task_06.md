@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Plugin manager + shortcut manager
 type: backend
 complexity: medium
@@ -34,17 +34,18 @@ Implement the two manager modules that wire plugin contributions and keyboard sh
 
 ## Subtasks
 
-- [ ] 6.1 Write pluginManager unit tests covering lifecycle order and cleanup — TDD red phase
-- [ ] 6.2 Implement `src/core/pluginManager.ts` — TDD green phase
-- [ ] 6.3 Write shortcutManager unit tests (Mod normalization, override, disable) — TDD red phase
-- [ ] 6.4 Implement `src/core/shortcutManager.ts` — TDD green phase
-- [ ] 6.5 Verify: sanitize schema contributions from plugins merge correctly via `mergeSanitizeSchema`
+- [x] 6.1 Write pluginManager unit tests covering lifecycle order and cleanup — TDD red phase
+- [x] 6.2 Implement `src/core/pluginManager.ts` — TDD green phase
+- [x] 6.3 Write shortcutManager unit tests (Mod normalization, override, disable) — TDD red phase
+- [x] 6.4 Implement `src/core/shortcutManager.ts` — TDD green phase
+- [x] 6.5 Verify: sanitize schema contributions from plugins merge correctly via `mergeSanitizeSchema`
 
 ## Implementation Details
 
 See TechSpec 'System Architecture' → Component Overview for the plugin/shortcut manager role in the data flow, and ADR-003 for the `EditorAPI` object these managers receive.
 
 Key constraints:
+
 - `invokeOnMount` returns cleanup functions returned by each plugin's `onMount`; cleanups are stored and called in reverse order on unmount (consistent with React's cleanup semantics).
 - `invokeOnChange` must track recursion depth via a counter that increments on entry and decrements on exit; the guard fires `console.warn` at depth > 2 but does NOT throw (to avoid crashing the editor on third-party plugin bugs).
 - `shortcutManager`: attach a single `keydown` listener to the document (not per-shortcut) and dispatch by matching; `Mod` normalization must be testable by mocking `navigator.platform`.
