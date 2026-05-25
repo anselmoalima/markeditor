@@ -13,4 +13,14 @@ export default [
       '**/.changeset/**',
     ],
   },
+  {
+    files: ['**/*.mjs', '**/scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        URL: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+  },
 ];

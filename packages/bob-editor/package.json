@@ -100,7 +100,7 @@
     "react-dom": "^18 || ^19"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.0",
+    "@arethetypeswrong/cli": "^0.17.4",
     "@size-limit/preset-small-lib": "^11.0.0",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.0.0",
@@ -111,6 +111,7 @@
     "@typescript-eslint/parser": "^8.0.0",
     "@vitest/coverage-v8": "^2.0.0",
     "eslint": "^9.0.0",
+    "jsdom": "^29.1.1",
     "publint": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
@@ -130,7 +131,7 @@
     "lint": "eslint . --max-warnings 0",
     "size": "size-limit",
     "publint": "publint .",
-    "attw": "attw --pack .",
+    "attw": "node scripts/check-types.mjs",
     "prepublishOnly": "pnpm build && pnpm test && pnpm typecheck && pnpm lint && pnpm publint && pnpm attw && pnpm size"
   }
 }

@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: packages/bob-editor scaffold — tsup, exports map, apps/playground
 type: infra
 complexity: high
@@ -38,19 +38,20 @@ Create the publish-ready scaffold for `packages/bob-editor` and the Vite playgro
 
 ## Subtasks
 
-- [ ] 2.1 Create `packages/bob-editor/package.json` with all publish-ready fields
-- [ ] 2.2 Create `packages/bob-editor/tsup.config.ts` with dual ESM/CJS + CSS + subpath entries
-- [ ] 2.3 Create `packages/bob-editor/vitest.config.ts` + `size-limit.json` + quality-gate configs
-- [ ] 2.4 Create stub `src/index.ts` and `src/types.ts` (placeholders only)
-- [ ] 2.5 Create `apps/playground/` scaffold (package.json, vite.config.ts, main.tsx, App.tsx)
-- [ ] 2.6 Verify build chain: `pnpm --filter bob-editor build` produces `dist/` with ESM + CJS + d.ts + CSS
-- [ ] 2.7 Write scaffold validation tests (see Tests section)
+- [x] 2.1 Create `packages/bob-editor/package.json` with all publish-ready fields
+- [x] 2.2 Create `packages/bob-editor/tsup.config.ts` with dual ESM/CJS + CSS + subpath entries
+- [x] 2.3 Create `packages/bob-editor/vitest.config.ts` + `size-limit.json` + quality-gate configs
+- [x] 2.4 Create stub `src/index.ts` and `src/types.ts` (placeholders only)
+- [x] 2.5 Create `apps/playground/` scaffold (package.json, vite.config.ts, main.tsx, App.tsx)
+- [x] 2.6 Verify build chain: `pnpm --filter bob-editor build` produces `dist/` with ESM + CJS + d.ts + CSS
+- [x] 2.7 Write scaffold validation tests (see Tests section)
 
 ## Implementation Details
 
 See TechSpec 'Development Sequencing' → Build Order steps 2–3, ADR-001 'Implementation Notes' for the exact `tsup.config.ts` entry list.
 
 Key constraints from TechSpec:
+
 - `exports` map must include both `import` (ESM) and `require` (CJS) conditions for `.` and each plugin subpath.
 - `./styles` and `./styles.css` both resolve to `dist/styles.css`.
 - `prepublishOnly` runs in this exact order; skipping steps is not allowed (CLAUDE.md §4).
