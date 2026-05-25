@@ -6,7 +6,7 @@
 | --- | --------------------------------------------------------------------------------- | --------- | ---------- | ---------------------------------------------------- |
 | 01  | Monorepo scaffold — pnpm workspaces, Turborepo, CI/CD, Changesets                 | completed | high       | —                                                    |
 | 02  | packages/bob-editor scaffold — tsup, exports map, apps/playground                 | completed | high       | task_01                                              |
-| 03  | Public type surface + type tests                                                  | pending   | medium     | task_02                                              |
+| 03  | Public type surface + type tests                                                  | completed | medium     | task_02                                              |
 | 04  | Core state — reducer, contexts, EditorAPI factory                                 | pending   | high       | task_03                                              |
 | 05  | Core pipeline — unified, sanitize merger, lazy registry, utils                    | pending   | high       | task_03                                              |
 | 06  | Plugin manager + shortcut manager                                                 | pending   | medium     | task_04, task_05                                     |

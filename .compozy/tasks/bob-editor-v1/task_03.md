@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Public type surface + type tests
 type: frontend
 complexity: medium
@@ -35,19 +35,20 @@ Define the complete public TypeScript API in `src/types.ts` and lock it with `ex
 
 ## Subtasks
 
-- [ ] 3.1 Write `src/types.ts` with all public interfaces from TechSpec Core Interfaces section
-- [ ] 3.2 Write `src/core/state/types.ts` with internal `BobEditorState` and `Action` discriminated union
-- [ ] 3.3 Update `src/index.ts` to re-export all public types
-- [ ] 3.4 Write `tests/type/props.test-d.ts` — `BobEditorProps` structural assertions
-- [ ] 3.5 Write `tests/type/api.test-d.ts` — `BobEditorRef` + `EditorAPI` method signature assertions
-- [ ] 3.6 Write `tests/type/plugin.test-d.ts` — `BobEditorPlugin`, `KeyboardShortcut`, `ToolbarButton` assertions
-- [ ] 3.7 Run `pnpm --filter bob-editor test:types` and confirm zero type errors
+- [x] 3.1 Write `src/types.ts` with all public interfaces from TechSpec Core Interfaces section
+- [x] 3.2 Write `src/core/state/types.ts` with internal `BobEditorState` and `Action` discriminated union
+- [x] 3.3 Update `src/index.ts` to re-export all public types
+- [x] 3.4 Write `tests/type/props.test-d.ts` — `BobEditorProps` structural assertions
+- [x] 3.5 Write `tests/type/api.test-d.ts` — `BobEditorRef` + `EditorAPI` method signature assertions
+- [x] 3.6 Write `tests/type/plugin.test-d.ts` — `BobEditorPlugin`, `KeyboardShortcut`, `ToolbarButton` assertions
+- [x] 3.7 Run `pnpm --filter bob-editor test:types` and confirm zero type errors
 
 ## Implementation Details
 
 See TechSpec 'Core Interfaces' section for the exact interface definitions. Do not copy them here — reference TechSpec directly.
 
 Key constraints:
+
 - `BobEditorProps.sanitize` accepts `boolean | Schema | ((merged: Schema) => Schema)` where `Schema` comes from `rehype-sanitize`.
 - `BobEditorProps.plugins` is `readonly BobEditorPlugin[]` — enforce immutability.
 - `EditorAPI` is a separate interface from `BobEditorRef`; the ref exposes a narrower surface (see TechSpec).

@@ -105,6 +105,7 @@
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
+    "@types/hast": "^3.0.4",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
@@ -133,5 +134,10 @@
     "publint": "publint .",
     "attw": "node scripts/check-types.mjs",
     "prepublishOnly": "pnpm build && pnpm test && pnpm typecheck && pnpm lint && pnpm publint && pnpm attw && pnpm size"
+  },
+  "dependencies": {
+    "monaco-editor": "^0.55.1",
+    "rehype-sanitize": "^6.0.0",
+    "unified": "^11.0.5"
   }
 }
