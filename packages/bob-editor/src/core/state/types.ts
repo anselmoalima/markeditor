@@ -8,6 +8,7 @@ interface BobEditorState {
   cursor: number;
   savedAt: number | null;
   storageStatus: 'idle' | 'saving' | 'saved' | 'error';
+  storageDisabled: boolean;
   pipeline: { status: 'idle' | 'pending' | 'ready' | 'error'; error?: Error };
 }
 

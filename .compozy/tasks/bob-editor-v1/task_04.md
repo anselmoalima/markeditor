@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Core state — reducer, contexts, EditorAPI factory
 type: frontend
 complexity: high
@@ -36,19 +36,20 @@ Implement the central state layer: a `useReducer`-based state machine with split
 
 ## Subtasks
 
-- [ ] 4.1 Write reducer unit tests (all action types) — TDD red phase
-- [ ] 4.2 Implement `src/core/state/reducer.ts` — TDD green phase
-- [ ] 4.3 Implement `src/core/state/contexts.tsx` with split BobEditorStateContext + BobEditorApiContext
-- [ ] 4.4 Implement `src/core/state/useEditorContext.ts` selector hook
-- [ ] 4.5 Implement `src/core/editorApi.ts` stable EditorAPI factory
-- [ ] 4.6 Implement `src/hooks/useControllableState.ts` controlled/uncontrolled resolver
-- [ ] 4.7 Verify: toolbar and plugin consumers can read state without triggering keypress-level re-renders
+- [x] 4.1 Write reducer unit tests (all action types) — TDD red phase
+- [x] 4.2 Implement `src/core/state/reducer.ts` — TDD green phase
+- [x] 4.3 Implement `src/core/state/contexts.tsx` with split BobEditorStateContext + BobEditorApiContext
+- [x] 4.4 Implement `src/core/state/useEditorContext.ts` selector hook
+- [x] 4.5 Implement `src/core/editorApi.ts` stable EditorAPI factory
+- [x] 4.6 Implement `src/hooks/useControllableState.ts` controlled/uncontrolled resolver
+- [x] 4.7 Verify: toolbar and plugin consumers can read state without triggering keypress-level re-renders
 
 ## Implementation Details
 
 See TechSpec 'Core Interfaces' → Data Models for `BobEditorState` and `Action` types, and ADR-003 'Implementation Notes' for context split rationale and Monaco ref integration pattern.
 
 Key constraints:
+
 - Split contexts prevent toolbar/plugins from re-rendering on every keystroke: `BobEditorApiContext` value is the same object reference across renders; only `BobEditorStateContext` changes.
 - `EditorAPI.insertText` delegates to Monaco `editor.executeEdits` when `editorRef.current` is non-null; falls back to string-splice when Monaco is absent (textarea mode or SSR).
 - `useControllableState`: when `value` prop is defined, always return it as current value; dispatch `content/setMarkdown` with `source: 'api'` to update internal state so `onChange` fires; never read from storage in controlled mode.
