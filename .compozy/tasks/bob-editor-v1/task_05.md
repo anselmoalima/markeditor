@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Core pipeline — unified, sanitize merger, lazy registry, utils
 type: backend
 complexity: high
@@ -38,20 +38,21 @@ Build the async `unified` pipeline composer, the layered sanitize schema merger,
 
 ## Subtasks
 
-- [ ] 5.1 Write XSS fixture battery and pipeline sanitize tests — TDD red phase
-- [ ] 5.2 Implement `src/core/sanitize/schema.ts` + `merge.ts` — TDD green phase
-- [ ] 5.3 Implement `src/utils/hash.ts` (FNV-1a) + `src/utils/debounce.ts`
-- [ ] 5.4 Implement `src/core/lazy/registry.ts` + `detector.ts`
-- [ ] 5.5 Implement `src/core/pipeline/builder.ts` — compose unified processor per plugin list
-- [ ] 5.6 Implement `src/core/pipeline/memo.ts` — LRU memoization with FNV cache key
-- [ ] 5.7 Create markdown feature fixtures (`tests/fixtures/markdown/`)
-- [ ] 5.8 Write pipeline feature tests against fixtures (verify in.md → out.html equality)
+- [x] 5.1 Write XSS fixture battery and pipeline sanitize tests — TDD red phase
+- [x] 5.2 Implement `src/core/sanitize/schema.ts` + `merge.ts` — TDD green phase
+- [x] 5.3 Implement `src/utils/hash.ts` (FNV-1a) + `src/utils/debounce.ts`
+- [x] 5.4 Implement `src/core/lazy/registry.ts` + `detector.ts`
+- [x] 5.5 Implement `src/core/pipeline/builder.ts` — compose unified processor per plugin list
+- [x] 5.6 Implement `src/core/pipeline/memo.ts` — LRU memoization with FNV cache key
+- [x] 5.7 Create markdown feature fixtures (`tests/fixtures/markdown/`)
+- [x] 5.8 Write pipeline feature tests against fixtures (verify in.md → out.html equality)
 
 ## Implementation Details
 
 See TechSpec 'Core Interfaces' → 'API Endpoints' and ADR-002, ADR-004, ADR-006 for pipeline composition, memoization strategy, sanitize merge semantics, and lazy-load registry design.
 
 Key constraints:
+
 - Hash function: FNV-1a over the markdown string is sufficient for cache identity; do NOT use `xxhash-wasm` (too heavy per ADR-002).
 - Sanitize merge: `mergeSanitizeSchema` must perform property-level union for `tagNames`, `attributes`, `protocols` arrays; it must NOT replace security-clause entries (e.g., stripping `on*` is always active).
 - LazyRegistry: module-level `Map<name, Promise>` so parallel calls to `get(name)` share the same Promise.
