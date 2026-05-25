@@ -1,0 +1,136 @@
+{
+  "name": "bob-editor",
+  "version": "0.0.1",
+  "description": "Fully-featured React Markdown editor with Monaco, GFM, math, Mermaid, and plugin system",
+  "license": "MIT",
+  "author": "anselmodev",
+  "keywords": [
+    "markdown",
+    "editor",
+    "react",
+    "monaco",
+    "gfm",
+    "math",
+    "mermaid",
+    "plugin"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./styles": "./dist/styles.css",
+    "./styles.css": "./dist/styles.css",
+    "./plugins": {
+      "import": {
+        "types": "./dist/plugins/index.d.ts",
+        "default": "./dist/plugins/index.js"
+      },
+      "require": {
+        "types": "./dist/plugins/index.d.cts",
+        "default": "./dist/plugins/index.cjs"
+      }
+    },
+    "./plugins/emoji": {
+      "import": {
+        "types": "./dist/plugins/emoji.d.ts",
+        "default": "./dist/plugins/emoji.js"
+      },
+      "require": {
+        "types": "./dist/plugins/emoji.d.cts",
+        "default": "./dist/plugins/emoji.cjs"
+      }
+    },
+    "./plugins/mentions": {
+      "import": {
+        "types": "./dist/plugins/mentions.d.ts",
+        "default": "./dist/plugins/mentions.js"
+      },
+      "require": {
+        "types": "./dist/plugins/mentions.d.cts",
+        "default": "./dist/plugins/mentions.cjs"
+      }
+    },
+    "./plugins/wordCount": {
+      "import": {
+        "types": "./dist/plugins/wordCount.d.ts",
+        "default": "./dist/plugins/wordCount.js"
+      },
+      "require": {
+        "types": "./dist/plugins/wordCount.d.cts",
+        "default": "./dist/plugins/wordCount.cjs"
+      }
+    },
+    "./plugins/tableOfContents": {
+      "import": {
+        "types": "./dist/plugins/tableOfContents.d.ts",
+        "default": "./dist/plugins/tableOfContents.js"
+      },
+      "require": {
+        "types": "./dist/plugins/tableOfContents.d.cts",
+        "default": "./dist/plugins/tableOfContents.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.0",
+    "@size-limit/preset-small-lib": "^11.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "eslint": "^9.0.0",
+    "publint": "^0.3.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "size-limit": "^11.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:types": "vitest --typecheck",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "size": "size-limit",
+    "publint": "publint .",
+    "attw": "attw --pack .",
+    "prepublishOnly": "pnpm build && pnpm test && pnpm typecheck && pnpm lint && pnpm publint && pnpm attw && pnpm size"
+  }
+}

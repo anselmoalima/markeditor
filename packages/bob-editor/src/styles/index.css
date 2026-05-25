@@ -1,0 +1,11 @@
+/* bob-editor styles — stub for task_02; grows in task_05+ */
+/* All custom properties use --mde-* prefix */
+
+:root {
+  --mde-font-family: system-ui, sans-serif;
+  --mde-font-size: 14px;
+  --mde-border-radius: 4px;
+  --mde-color-bg: #ffffff;
+  --mde-color-text: #1a1a1a;
+  --mde-color-border: #d0d0d0;
+}

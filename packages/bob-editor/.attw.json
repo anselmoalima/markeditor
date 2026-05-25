@@ -1,0 +1,4 @@
+{
+  "ignoreRules": [],
+  "excludeEntrypoints": ["./styles", "./styles.css", "./package.json"]
+}

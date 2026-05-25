@@ -1,0 +1,21 @@
+[
+  {
+    "name": "core (without Monaco)",
+    "path": "./dist/index.js",
+    "limit": "80 kB",
+    "gzip": true,
+    "import": "*"
+  },
+  {
+    "name": "full bundle (core + all opt-in plugins)",
+    "path": [
+      "./dist/index.js",
+      "./dist/plugins/emoji.js",
+      "./dist/plugins/mentions.js",
+      "./dist/plugins/wordCount.js",
+      "./dist/plugins/tableOfContents.js"
+    ],
+    "limit": "500 kB",
+    "gzip": true
+  }
+]
