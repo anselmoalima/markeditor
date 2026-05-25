@@ -1,0 +1,36 @@
+{
+  "name": "markdow-editor-root",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Monorepo for bob-editor — React Markdown editor component",
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:types": "turbo run test:types",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "size": "turbo run size",
+    "e2e": "turbo run e2e",
+    "test:infra": "node --test tests/infra.test.mjs",
+    "prepare": "husky",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md,yaml,yml}\" --ignore-path .prettierignore"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
+    "turbo": "^2.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,css,md,yaml,yml}": "prettier --write"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  }
+}

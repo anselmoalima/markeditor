@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Monorepo scaffold — pnpm workspaces, Turborepo, CI/CD, Changesets
 type: chore
 complexity: high
@@ -37,21 +37,22 @@ Establish the complete monorepo infrastructure that all subsequent tasks depend 
 
 ## Subtasks
 
-- [ ] 1.1 Create `pnpm-workspace.yaml`, root `package.json`, `.nvmrc`, `.editorconfig`
-- [ ] 1.2 Create `turbo.json` with full task graph matching TechSpec Build Order
-- [ ] 1.3 Create `tsconfig.base.json` with strict TypeScript settings from TechSpec §2
-- [ ] 1.4 Add ESLint (`eslint.config.js`) and Prettier (`.prettierrc`, `.prettierignore`) root configs
-- [ ] 1.5 Create `.github/workflows/ci.yml` with Node × React matrix
-- [ ] 1.6 Create `.github/workflows/release.yml` with Changesets + OIDC provenance
-- [ ] 1.7 Create `.github/workflows/size.yml` for bundle size gate
-- [ ] 1.8 Initialize `.changeset/config.json` and add LICENSE, CONTRIBUTING.md, README.md placeholders
-- [ ] 1.9 Write infrastructure smoke tests (see Tests section)
+- [x] 1.1 Create `pnpm-workspace.yaml`, root `package.json`, `.nvmrc`, `.editorconfig`
+- [x] 1.2 Create `turbo.json` with full task graph matching TechSpec Build Order
+- [x] 1.3 Create `tsconfig.base.json` with strict TypeScript settings from TechSpec §2
+- [x] 1.4 Add ESLint (`eslint.config.js`) and Prettier (`.prettierrc`, `.prettierignore`) root configs
+- [x] 1.5 Create `.github/workflows/ci.yml` with Node × React matrix
+- [x] 1.6 Create `.github/workflows/release.yml` with Changesets + OIDC provenance
+- [x] 1.7 Create `.github/workflows/size.yml` for bundle size gate
+- [x] 1.8 Initialize `.changeset/config.json` and add LICENSE, CONTRIBUTING.md, README.md placeholders
+- [x] 1.9 Write infrastructure smoke tests (see Tests section)
 
 ## Implementation Details
 
 See TechSpec 'Development Sequencing' → 'Build Order' step 1 and ADR-001 'Implementation Notes' for exact file contents and Turbo task graph semantics.
 
 Key constraints:
+
 - `turbo.json` task `build` must declare `dependsOn: ["^build"]` so Turbo respects cross-workspace build order.
 - CI matrix uses `pnpm install --frozen-lockfile` to prevent drift.
 - OIDC provenance requires `id-token: write` permission in the release workflow job and `npm publish --provenance`.
