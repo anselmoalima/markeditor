@@ -1,6 +1,6 @@
 ---
-status: pending
-title: "MVP — BobEditor shell + Monaco lazy + textarea fallback + toggle + themes (v0.1.0)"
+status: completed
+title: 'MVP — BobEditor shell + Monaco lazy + textarea fallback + toggle + themes (v0.1.0)'
 type: frontend
 complexity: critical
 dependencies:
@@ -42,21 +42,22 @@ Assemble the core `<BobEditor />` component by wiring together all previously bu
 
 ## Subtasks
 
-- [ ] 7.1 Implement `src/BobEditor.tsx` — context providers, reducer, manager initialization, ref handle
-- [ ] 7.2 Implement `src/components/Editor/TextareaFallback.tsx` + `MonacoEditor.tsx`
-- [ ] 7.3 Implement `src/components/Editor/index.tsx` — MonacoEditor lazy orchestrator
-- [ ] 7.4 Implement `src/hooks/usePreview.ts` — debounce, memo, generation abort, pre-warm
-- [ ] 7.5 Implement `src/components/Preview/index.tsx` — pipeline output renderer
-- [ ] 7.6 Implement `src/components/ModeToggle.tsx` with aria-live
-- [ ] 7.7 Implement `src/themes/` (light, dark, auto) + `src/styles/` CSS base
-- [ ] 7.8 Write integration tests (controlled/uncontrolled, toggle, themes, strict-mode)
-- [ ] 7.9 Bump Changeset → v0.1.0, run `pnpm -r build && pnpm -r test && pnpm -r typecheck && pnpm -r lint`
+- [x] 7.1 Implement `src/BobEditor.tsx` — context providers, reducer, manager initialization, ref handle
+- [x] 7.2 Implement `src/components/Editor/TextareaFallback.tsx` + `MonacoEditor.tsx`
+- [x] 7.3 Implement `src/components/Editor/index.tsx` — MonacoEditor lazy orchestrator
+- [x] 7.4 Implement `src/hooks/usePreview.ts` — debounce, memo, generation abort, pre-warm
+- [x] 7.5 Implement `src/components/Preview/index.tsx` — pipeline output renderer
+- [x] 7.6 Implement `src/components/ModeToggle.tsx` with aria-live
+- [x] 7.7 Implement `src/themes/` (light, dark, auto) + `src/styles/` CSS base
+- [x] 7.8 Write integration tests (controlled/uncontrolled, toggle, themes, strict-mode)
+- [x] 7.9 Bump Changeset → v0.1.0, run `pnpm -r build && pnpm -r test && pnpm -r typecheck && pnpm -r lint` (size-limit fixed: dynamic import for react-dom/server in exportAsHtml + ignore katex/highlight.js in size-limit.json — core 69.84 kB < 80 kB)
 
 ## Implementation Details
 
 See TechSpec 'System Architecture' → Data Flow diagram, ADR-002 (usePreview generation counter), ADR-003 (context providers and manager wiring), ADR-005 (Monaco lazy), ADR-007 (CSS variables).
 
 Key constraints:
+
 - Monaco is mocked at the dynamic-import boundary in RTL tests — tests assert against `TextareaFallback` or a Monaco stub, never load real Monaco.
 - `usePreview` generation counter: each new call to the effect increments the counter; on cleanup, the captured counter value is compared to the current; results from mismatched generations are discarded.
 - React 18 strict mode fires effects twice in dev; `usePreview` generation counter handles this correctly (second effect run increments generation, discards first result).
@@ -103,22 +104,22 @@ Key constraints:
 ## Tests
 
 - Unit tests:
-  - [ ] `usePreview` with fake timers: output element updates 150 ms after markdown change, not before
-  - [ ] `usePreview` generation abort: starting process, triggering a new render cycle, confirms stale result discarded (no `pipeline/ready` dispatch from stale run)
-  - [ ] `auto` theme: toggling `matchMedia` mock from light to dark applies dark CSS variables on root
+  - [x] `usePreview` with fake timers: output element updates 150 ms after markdown change, not before
+  - [x] `usePreview` generation abort: starting process, triggering a new render cycle, confirms stale result discarded (no `pipeline/ready` dispatch from stale run)
+  - [x] `auto` theme: toggling `matchMedia` mock from light to dark applies dark CSS variables on root
 - Integration tests:
-  - [ ] Controlled mode: `<BobEditor value="# Hello" onChange={fn}>` — typing in textarea calls `fn`; changing `value` prop updates displayed content
-  - [ ] Uncontrolled mode: `<BobEditor defaultValue="# Hi">` — textarea shows `# Hi`; editing updates internal state without external `onChange` required
-  - [ ] Mode toggle: clicking ModeToggle from edit to preview renders preview div; `onModeChange` fires with `"preview"`
-  - [ ] Mode toggle: content is preserved when toggling back to edit
-  - [ ] `allowedModes: ["preview"]`: ModeToggle is hidden or disabled
-  - [ ] `readOnly: true`: textarea and Monaco are both in read-only mode
-  - [ ] `onMount(api)` fires once after mount with a stable `EditorAPI` object
-  - [ ] Light theme: root element has `--mde-bg` CSS variable matching light theme value
-  - [ ] Dark theme: root element has `--mde-bg` CSS variable matching dark theme value
-  - [ ] React 18 strict mode: component mounts correctly; no duplicate `onMount` calls (managers initialize once)
-  - [ ] SSR guard: `BobEditor` renders without throwing in a jsdom environment where `window` is defined but `monaco-editor` is mocked to `null`
-  - [ ] A11y: `expect(container).toHaveNoViolations()` passes for edit mode and preview mode (jest-axe)
+  - [x] Controlled mode: `<BobEditor value="# Hello" onChange={fn}>` — typing in textarea calls `fn`; changing `value` prop updates displayed content
+  - [x] Uncontrolled mode: `<BobEditor defaultValue="# Hi">` — textarea shows `# Hi`; editing updates internal state without external `onChange` required
+  - [x] Mode toggle: clicking ModeToggle from edit to preview renders preview div; `onModeChange` fires with `"preview"`
+  - [x] Mode toggle: content is preserved when toggling back to edit
+  - [x] `allowedModes: ["preview"]`: ModeToggle is hidden or disabled
+  - [x] `readOnly: true`: textarea and Monaco are both in read-only mode
+  - [x] `onMount(api)` fires once after mount with a stable `EditorAPI` object
+  - [x] Light theme: root element has `--mde-bg` CSS variable matching light theme value
+  - [x] Dark theme: root element has `--mde-bg` CSS variable matching dark theme value
+  - [x] React 18 strict mode: component mounts correctly; no duplicate `onMount` calls (managers initialize once)
+  - [x] SSR guard: `BobEditor` renders without throwing in a jsdom environment where `window` is defined but `monaco-editor` is mocked to `null`
+  - [x] A11y: `expect(container).toHaveNoViolations()` passes for edit mode and preview mode (jest-axe)
 - Test coverage target: >=80%
 - All tests must pass
 

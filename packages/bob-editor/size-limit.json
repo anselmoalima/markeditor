@@ -4,7 +4,8 @@
     "path": "./dist/index.js",
     "limit": "80 kB",
     "gzip": true,
-    "import": "*"
+    "import": "*",
+    "ignore": ["katex", "highlight.js"]
   },
   {
     "name": "full bundle (core + all opt-in plugins)",
@@ -16,6 +17,7 @@
       "./dist/plugins/tableOfContents.js"
     ],
     "limit": "500 kB",
-    "gzip": true
+    "gzip": true,
+    "ignore": ["katex", "highlight.js"]
   }
 ]

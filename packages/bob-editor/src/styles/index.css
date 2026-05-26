@@ -1,11 +1,83 @@
-/* bob-editor styles — stub for task_02; grows in task_05+ */
-/* All custom properties use --mde-* prefix */
-
-:root {
+.bobmd-root {
   --mde-font-family: system-ui, sans-serif;
   --mde-font-size: 14px;
-  --mde-border-radius: 4px;
-  --mde-color-bg: #ffffff;
-  --mde-color-text: #1a1a1a;
-  --mde-color-border: #d0d0d0;
+  --mde-border-radius: 6px;
+  --mde-bg: #ffffff;
+  --mde-fg: #1a1a1a;
+  --mde-border: #d0d0d0;
+  --mde-accent: #0066cc;
+
+  background: var(--mde-bg);
+  color: var(--mde-fg);
+  border: 1px solid var(--mde-border);
+  border-radius: var(--mde-border-radius);
+  font-family: var(--mde-font-family);
+  font-size: var(--mde-font-size);
+  overflow: hidden;
+}
+
+.bobmd-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bobmd-mode-toggle-wrap {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px;
+}
+
+.bobmd-mode-toggle {
+  border: 1px solid var(--mde-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mde-fg);
+  cursor: pointer;
+  font: inherit;
+  padding: 6px 12px;
+}
+
+.bobmd-editor-panel,
+.bobmd-preview {
+  min-height: 180px;
+}
+
+.bobmd-textarea {
+  width: 100%;
+  min-height: 240px;
+  resize: vertical;
+  border: 0;
+  outline: 0;
+  padding: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.bobmd-preview {
+  padding: 12px;
+}
+
+.bobmd-preview-loading {
+  opacity: 0.8;
+  font-size: 0.875rem;
+}
+
+.bobmd-preview-error {
+  color: #c64545;
+  border: 1px solid #c64545;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.bobmd-visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }
