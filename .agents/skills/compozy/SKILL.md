@@ -65,35 +65,35 @@ For a detailed step-by-step walkthrough of each phase, read `references/workflow
 
 ## CLI Commands Quick Reference
 
-| Command | Purpose | Key Flags |
-| --- | --- | --- |
-| **Setup & Config** | | |
-| `compozy setup` | Install core skills and enabled extension assets | `--agent`, `--skill`, `--global`, `--copy`, `--list`, `--all`, `--yes` |
-| `compozy upgrade` | Update CLI to latest release | |
-| **Workflow Execution** | | |
-| `compozy daemon` | Manage the home-scoped daemon lifecycle | `start`, `status`, `stop` |
-| `compozy workspaces` | Inspect and manage daemon workspace registrations | `list`, `show`, `register`, `unregister`, `resolve` |
-| `compozy tasks run` | Execute PRD task files through the daemon | `--name`, `--attach`, `--ui`, `--stream`, `--detach`, `--task-runtime` |
-| `compozy exec` | Execute an ad hoc prompt | `--agent`, `--format`, `--prompt-file`, `--tui`, `--persist`, `--run-id` |
-| `compozy runs` | Attach, watch, and purge daemon-managed runs | `attach`, `watch`, `purge` |
-| **Review** | | |
-| `compozy reviews fetch` | Fetch provider review comments | `--provider`, `--pr`, `--name`, `--round` |
-| `compozy reviews fix` | Process review issue files | `--name`, `--round`, `--concurrent`, `--batch-size`, `--ide` |
-| **Utilities** | | |
-| `compozy tasks validate` | Validate task file metadata | `--name`, `--tasks-dir`, `--format` |
-| `compozy sync` | Reconcile workflow artifacts into daemon `global.db` | `--name`, `--root-dir`, `--tasks-dir` |
-| `compozy archive` | Move daemon-eligible completed workflows to archive | `--name`, `--root-dir`, `--tasks-dir` |
-| `compozy migrate` | Convert legacy artifacts to frontmatter | `--name`, `--dry-run`, `--reviews-dir` |
-| **Agent Management** | | |
-| `compozy agents list` | List resolved reusable agents | |
-| `compozy agents inspect` | View agent definition and defaults | `<name>` |
-| **Extensions** | | |
-| `compozy ext list` | List extensions | |
-| `compozy ext inspect` | View extension details | `<name>` |
-| `compozy ext install` | Install an extension from a local path or GitHub repo archive | `<source>`, `--remote`, `--ref`, `--subdir` |
-| `compozy ext uninstall` | Remove an extension | `<name>` |
-| `compozy ext enable/disable` | Toggle extension | `<name>` |
-| `compozy ext doctor` | Diagnose extension issues | |
+| Command                      | Purpose                                                       | Key Flags                                                                                                  |
+| ---------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Setup & Config**           |                                                               |                                                                                                            |
+| `compozy setup`              | Install core skills and enabled extension assets              | `--agent`, `--skill`, `--global`, `--copy`, `--list`, `--all`, `--yes`                                     |
+| `compozy upgrade`            | Update CLI to latest release                                  |                                                                                                            |
+| **Workflow Execution**       |                                                               |                                                                                                            |
+| `compozy daemon`             | Manage the home-scoped daemon lifecycle                       | `start`, `status`, `stop`                                                                                  |
+| `compozy workspaces`         | Inspect and manage daemon workspace registrations             | `list`, `show`, `register`, `unregister`, `resolve`                                                        |
+| `compozy tasks run`          | Execute PRD task files through the daemon                     | `--name`, `--multiple`, `--recursive` / `-r`, `--attach`, `--ui`, `--stream`, `--detach`, `--task-runtime` |
+| `compozy exec`               | Execute an ad hoc prompt                                      | `--agent`, `--format`, `--prompt-file`, `--tui`, `--persist`, `--run-id`                                   |
+| `compozy runs`               | Attach, watch, and purge daemon-managed runs                  | `attach`, `watch`, `purge`                                                                                 |
+| **Review**                   |                                                               |                                                                                                            |
+| `compozy reviews fetch`      | Fetch provider review comments                                | `--provider`, `--pr`, `--name`, `--round`                                                                  |
+| `compozy reviews fix`        | Process review issue files                                    | `--name`, `--round`, `--concurrent`, `--batch-size`, `--ide`                                               |
+| **Utilities**                |                                                               |                                                                                                            |
+| `compozy tasks validate`     | Validate task file metadata                                   | `--name`, `--tasks-dir`, `--format`                                                                        |
+| `compozy sync`               | Reconcile workflow artifacts into daemon `global.db`          | `--name`, `--root-dir`, `--tasks-dir`                                                                      |
+| `compozy archive`            | Move daemon-eligible completed workflows to archive           | `--name`, `--root-dir`, `--tasks-dir`                                                                      |
+| `compozy migrate`            | Convert legacy artifacts to frontmatter                       | `--name`, `--dry-run`, `--reviews-dir`                                                                     |
+| **Agent Management**         |                                                               |                                                                                                            |
+| `compozy agents list`        | List resolved reusable agents                                 |                                                                                                            |
+| `compozy agents inspect`     | View agent definition and defaults                            | `<name>`                                                                                                   |
+| **Extensions**               |                                                               |                                                                                                            |
+| `compozy ext list`           | List extensions                                               |                                                                                                            |
+| `compozy ext inspect`        | View extension details                                        | `<name>`                                                                                                   |
+| `compozy ext install`        | Install an extension from a local path or GitHub repo archive | `<source>`, `--remote`, `--ref`, `--subdir`                                                                |
+| `compozy ext uninstall`      | Remove an extension                                           | `<name>`                                                                                                   |
+| `compozy ext enable/disable` | Toggle extension                                              | `<name>`                                                                                                   |
+| `compozy ext doctor`         | Diagnose extension issues                                     |                                                                                                            |
 
 Common flags shared by `tasks run`, `exec`, and `reviews fix`: `--ide`, `--model`, `--reasoning-effort`, `--add-dir`, `--auto-commit`, `--dry-run`.
 
@@ -101,22 +101,22 @@ For complete flag documentation, read `references/cli-reference.md`.
 
 ## Core Skills Summary
 
-| Skill | Trigger | When To Use | Do Not Use For |
-| --- | --- | --- | --- |
-| `cy-create-prd` | `/cy-create-prd` | Building a Product Requirements Document | TechSpec, task breakdown, coding |
-| `cy-create-techspec` | `/cy-create-techspec` | Translating PRD into technical design | PRD creation, task execution |
-| `cy-create-tasks` | `/cy-create-tasks` | Decomposing PRD+TechSpec into task files | Execution, review |
-| `cy-execute-task` | (internal) | Executing a single PRD task (called by `compozy tasks run`) | Direct invocation, review work |
-| `cy-review-round` | `/cy-review-round` | Performing comprehensive code review | Fetching external reviews, fixing |
-| `cy-fix-reviews` | (internal) | Remediating review issues (called by `compozy reviews fix`) | Fetching reviews, task execution |
-| `cy-final-verify` | `/cy-final-verify` | Enforcing verification before completion claims | Early planning, brainstorming |
-| `cy-workflow-memory` | (internal) | Maintaining cross-task workflow memory | PR reviews, user preferences |
-| `compozy` | `/compozy` | Learning how to use Compozy | Executing workflow steps |
+| Skill                | Trigger               | When To Use                                                 | Do Not Use For                    |
+| -------------------- | --------------------- | ----------------------------------------------------------- | --------------------------------- |
+| `cy-create-prd`      | `/cy-create-prd`      | Building a Product Requirements Document                    | TechSpec, task breakdown, coding  |
+| `cy-create-techspec` | `/cy-create-techspec` | Translating PRD into technical design                       | PRD creation, task execution      |
+| `cy-create-tasks`    | `/cy-create-tasks`    | Decomposing PRD+TechSpec into task files                    | Execution, review                 |
+| `cy-execute-task`    | (internal)            | Executing a single PRD task (called by `compozy tasks run`) | Direct invocation, review work    |
+| `cy-review-round`    | `/cy-review-round`    | Performing comprehensive code review                        | Fetching external reviews, fixing |
+| `cy-fix-reviews`     | (internal)            | Remediating review issues (called by `compozy reviews fix`) | Fetching reviews, task execution  |
+| `cy-final-verify`    | `/cy-final-verify`    | Enforcing verification before completion claims             | Early planning, brainstorming     |
+| `cy-workflow-memory` | (internal)            | Maintaining cross-task workflow memory                      | PR reviews, user preferences      |
+| `compozy`            | `/compozy`            | Learning how to use Compozy                                 | Executing workflow steps          |
 
 ## Optional Extension Skills
 
-| Skill | Trigger | When To Use | Install Flow |
-| --- | --- | --- | --- |
+| Skill             | Trigger            | When To Use                                                | Install Flow                                                                                                                                                           |
+| ----------------- | ------------------ | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `cy-idea-factory` | `/cy-idea-factory` | Raw feature idea needs structured exploration before a PRD | `compozy ext install --yes compozy/compozy --remote github --ref <tag> --subdir extensions/cy-idea-factory` -> `compozy ext enable cy-idea-factory` -> `compozy setup` |
 
 For detailed skill descriptions and inputs/outputs, read `references/skills-reference.md`.
@@ -150,6 +150,7 @@ For detailed skill descriptions and inputs/outputs, read `references/skills-refe
 ```
 
 Global paths:
+
 - `~/.compozy/agents/<name>/` -- global reusable agents (workspace overrides global)
 - `~/.compozy/extensions/` -- user-scoped extensions
 - `~/.compozy/runs/<run-id>/` -- daemon-managed run artifacts and persisted exec sessions
@@ -172,6 +173,7 @@ types = ["frontend", "backend", "docs", "test", "infra", "refactor", "chore", "b
 
 [tasks.run]
 include_completed = false
+recursive = false
 
 [fix_reviews]
 concurrent = 2
@@ -199,14 +201,14 @@ Reusable agents are standalone personas that can be invoked via `compozy exec --
 
 **Council agents shipped by the optional `cy-idea-factory` extension**:
 
-| Agent | Perspective |
-| --- | --- |
+| Agent                | Perspective                                           |
+| -------------------- | ----------------------------------------------------- |
 | `pragmatic-engineer` | Execution-focused, delivery speed, maintenance burden |
-| `architect-advisor` | Long-term system coherence, boundaries, coupling |
-| `security-advocate` | Attack vectors, compliance, data protection |
-| `product-mind` | User impact, business value, opportunity cost |
-| `devils-advocate` | Challenges assumptions, surfaces risks, stress-tests |
-| `the-thinker` | Cross-domain patterns, structural reframing |
+| `architect-advisor`  | Long-term system coherence, boundaries, coupling      |
+| `security-advocate`  | Attack vectors, compliance, data protection           |
+| `product-mind`       | User impact, business value, opportunity cost         |
+| `devils-advocate`    | Challenges assumptions, surfaces risks, stress-tests  |
+| `the-thinker`        | Cross-domain patterns, structural reframing           |
 
 Install flow: `compozy ext install --yes compozy/compozy --remote github --ref <tag> --subdir extensions/cy-idea-factory` -> `compozy ext enable cy-idea-factory` -> `compozy setup`.
 
