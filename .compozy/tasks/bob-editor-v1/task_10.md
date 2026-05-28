@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Opt-in built-in plugins — emoji, mentions, wordCount, TOC (v0.4.0)
 type: frontend
 complexity: medium
@@ -36,19 +36,20 @@ Implement the four opt-in built-in plugins (emoji, mentions, wordCount, tableOfC
 
 ## Subtasks
 
-- [ ] 10.1 Implement `src/plugins/emoji.ts` with remark plugin + optional toolbar button
-- [ ] 10.2 Implement `src/plugins/mentions.ts` factory with configurable resolver
-- [ ] 10.3 Implement `src/plugins/wordCount.ts` with onChange word/char count
-- [ ] 10.4 Implement `src/plugins/tableOfContents.ts` with hast-level TOC insertion
-- [ ] 10.5 Implement `src/plugins/index.ts` barrel + verify tsup subpath tree-shaking
-- [ ] 10.6 Write `examples/with-plugins.tsx`
-- [ ] 10.7 Write unit and integration tests for each plugin
+- [x] 10.1 Implement `src/plugins/emoji.ts` with remark plugin + optional toolbar button
+- [x] 10.2 Implement `src/plugins/mentions.ts` factory with configurable resolver
+- [x] 10.3 Implement `src/plugins/wordCount.ts` with onChange word/char count
+- [x] 10.4 Implement `src/plugins/tableOfContents.ts` with hast-level TOC insertion
+- [x] 10.5 Implement `src/plugins/index.ts` barrel + verify tsup subpath tree-shaking
+- [x] 10.6 Write `examples/with-plugins.tsx`
+- [x] 10.7 Write unit and integration tests for each plugin
 
 ## Implementation Details
 
 See TechSpec 'System Architecture' → `plugins/` directory listing and PRD §5.5.4 (opt-in plugins list). Each plugin must conform to `BobEditorPlugin` from task_03; see TechSpec Core Interfaces for the full contract.
 
 Key constraints:
+
 - Each plugin file must be a valid tsup entry so `bob-editor/plugins/emoji` resolves to its own chunk without bundling other plugins.
 - `wordCount.ts` uses `onChange` hook (not `onMount`) since word count changes with content; do not use a React side-effect inside the plugin — the `api.showNotification` call surfaces it.
 - `tableOfContents.ts` uses `onAfterRender(hast)` to walk the hast tree, collect `h1-h6` nodes (already have `id` from `rehype-slug`), and prepend a `<nav aria-label="Table of contents"><ul>...</ul></nav>` hast node.

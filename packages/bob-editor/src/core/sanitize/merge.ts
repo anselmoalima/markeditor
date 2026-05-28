@@ -23,6 +23,23 @@ function isLockedBlockedAttr(name: unknown): boolean {
 type AttributeMap = Record<string, any[]>;
 type ProtocolMap = Record<string, string[]>;
 
+/**
+ * A plain-string entry (e.g. "className") means "allow any value".
+ * A tuple entry (e.g. ["className","foo"]) restricts to listed values.
+ * hast-util-sanitize returns the FIRST matching definition, so if a tuple
+ * precedes a plain string in the merged list, the restriction wins.
+ * This helper removes all tuple entries for an attribute name when a plain
+ * string for that same name is present — plain string always takes precedence.
+ */
+function collapseUnrestrictedAttrs(attrs: unknown[]): unknown[] {
+  const unrestricted = new Set<string>();
+  for (const a of attrs) {
+    if (typeof a === 'string') unrestricted.add(a);
+  }
+  if (unrestricted.size === 0) return attrs;
+  return attrs.filter((a) => !Array.isArray(a) || !unrestricted.has(a[0] as string));
+}
+
 function mergeAttributeMaps(
   base: AttributeMap | undefined,
   ext: AttributeMap | undefined,
@@ -30,7 +47,7 @@ function mergeAttributeMaps(
   if (!ext) return base ?? {};
   const result: AttributeMap = { ...(base ?? {}) };
   for (const [tag, attrs] of Object.entries(ext)) {
-    result[tag] = unionArrays(result[tag], attrs);
+    result[tag] = collapseUnrestrictedAttrs(unionArrays(result[tag], attrs));
   }
   return result;
 }

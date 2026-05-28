@@ -151,4 +151,146 @@ describe('Toolbar', () => {
     const textarea = screen.getByTestId('mock-monaco') as HTMLTextAreaElement;
     expect(textarea.value).toContain('**');
   });
+
+  it('toolbar button clicks: strikethrough, code, blockquote, lists all trigger wrapSelection', async () => {
+    const user = userEvent.setup();
+    render(<BobEditor toolbar={true} defaultValue="text" />);
+
+    // Click strikethrough
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-strikethrough'));
+    let val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+    expect(val).toContain('~~');
+
+    // Click code (inline)
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-code'));
+    val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+    expect(val).toContain('`');
+
+    // Click blockquote
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-blockquote'));
+    val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+    expect(val).toContain('>');
+
+    // Click ordered-list
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-ordered-list'));
+    val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+    expect(val).toContain('1.');
+
+    // Click unordered-list
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-unordered-list'));
+    val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+    expect(val).toContain('- ');
+
+    // Click task-list
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-task-list'));
+    val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+    expect(val).toContain('[ ]');
+  });
+
+  it('heading buttons 1-6 all insert heading markers', async () => {
+    const user = userEvent.setup();
+    render(<BobEditor toolbar={true} defaultValue="text" />);
+
+    for (const level of [2, 3, 4, 5, 6] as const) {
+      await user.click(screen.getByTestId(`bobmd-toolbar-btn-heading${level}`));
+      const val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+      expect(val).toContain('#');
+    }
+  });
+
+  it('codeblock button inserts code block markers', async () => {
+    const user = userEvent.setup();
+    render(<BobEditor toolbar={true} defaultValue="text" />);
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-codeblock'));
+    const val = (screen.getByTestId('mock-monaco') as HTMLTextAreaElement).value;
+    expect(val).toContain('```');
+  });
+
+  it('undo and redo buttons fire without crash', async () => {
+    // jsdom does not implement execCommand — define a no-op to avoid unhandled errors
+    const execCommandMock = vi.fn().mockReturnValue(true);
+    Object.defineProperty(document, 'execCommand', {
+      value: execCommandMock,
+      writable: true,
+      configurable: true,
+    });
+
+    const user = userEvent.setup();
+    render(<BobEditor toolbar={true} defaultValue="text" />);
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-undo'));
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-redo'));
+    expect(screen.getByTestId('bobmd-toolbar')).toBeInTheDocument();
+    expect(execCommandMock).toHaveBeenCalledWith('undo');
+    expect(execCommandMock).toHaveBeenCalledWith('redo');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    delete (document as any).execCommand;
+  });
+
+  it('image toolbar button opens insert image dialog', async () => {
+    const user = userEvent.setup();
+    render(<BobEditor toolbar={true} />);
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-image'));
+    expect(screen.getByTestId('bobmd-dialog-insert-image')).toBeInTheDocument();
+  });
+
+  it('overflow button toggles overflow menu', async () => {
+    let resizeCallback: ResizeObserverCallback | null = null;
+
+    class MockResizeObserver2 {
+      constructor(cb: ResizeObserverCallback) {
+        resizeCallback = cb;
+      }
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    }
+
+    Object.defineProperty(window, 'ResizeObserver', {
+      writable: true,
+      value: MockResizeObserver2,
+    });
+
+    const user = userEvent.setup();
+    render(<BobEditor toolbar={true} />);
+
+    await act(async () => {
+      resizeCallback?.(
+        [{ contentRect: { width: 400 } } as ResizeObserverEntry],
+        {} as ResizeObserver,
+      );
+    });
+
+    const overflowBtn = screen.getByTestId('bobmd-toolbar-overflow-btn');
+    expect(overflowBtn).toBeInTheDocument();
+
+    await user.click(overflowBtn);
+    expect(screen.getByTestId('bobmd-toolbar-overflow-menu')).toBeInTheDocument();
+
+    await user.click(overflowBtn);
+    expect(screen.queryByTestId('bobmd-toolbar-overflow-menu')).not.toBeInTheDocument();
+  });
+
+  it('custom toolbar config with ToolbarConfig object renders custom buttons', async () => {
+    const user = userEvent.setup();
+    const customAction = vi.fn();
+    render(
+      <BobEditor
+        toolbar={{
+          items: [
+            'bold',
+            {
+              id: 'custom-btn',
+              label: 'Custom',
+              action: customAction,
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId('bobmd-toolbar-btn-bold')).toBeInTheDocument();
+    await user.click(screen.getByTestId('bobmd-toolbar-btn-custom-btn'));
+    expect(customAction).toHaveBeenCalled();
+  });
 });

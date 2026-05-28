@@ -33,6 +33,7 @@ import type {
   BobmdTheme,
   EditorMode,
   KeyboardShortcut,
+  HastRoot,
 } from './types.js';
 import { lightTheme } from './themes/light.js';
 import { darkTheme } from './themes/dark.js';
@@ -44,6 +45,24 @@ import {
   alertsPlugin,
   footnotesPlugin,
 } from './plugins/builtin/index.js';
+
+// Wraps onAfterRender plugin hooks as a unified rehype transformer.
+// Runs after rehype-slug (heading IDs set) and before rehype-sanitize.
+function createAfterRenderPlugin(plugins: readonly BobEditorPlugin[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function () {
+    return function (tree: HastRoot) {
+      for (const plugin of plugins) {
+        if (plugin.onAfterRender) {
+          const result = plugin.onAfterRender(tree);
+          if (result !== undefined && result !== tree) {
+            tree.children = result.children;
+          }
+        }
+      }
+    };
+  };
+}
 
 const BUILTIN_PLUGINS: readonly BobEditorPlugin[] = [
   gfmPlugin,
@@ -362,6 +381,12 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
       if (plugin.rehypePlugins) {
         list.push(...plugin.rehypePlugins);
       }
+    }
+    // Wire onAfterRender hooks as a unified rehype plugin (before rehype-sanitize)
+    const afterRenderPlugins = activePluginsRef.current.filter((p) => p.onAfterRender);
+    if (afterRenderPlugins.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      list.push(createAfterRenderPlugin(afterRenderPlugins) as any);
     }
     return list;
     // eslint-disable-next-line react-hooks/exhaustive-deps
