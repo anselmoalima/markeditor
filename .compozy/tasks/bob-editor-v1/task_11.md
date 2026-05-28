@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Image upload + storage + export + sticky toolbar + custom themes (v0.5.0)
 type: frontend
 complexity: high
@@ -40,19 +40,20 @@ Implement the five remaining Phase 5 features: image upload with optimistic UI a
 
 ## Subtasks
 
-- [ ] 11.1 Implement `src/hooks/useStorageSync.ts` with write-through + ADR-008 controlled guard
-- [ ] 11.2 Wire image upload optimistic flow into InsertImage dialog, drag-drop, and paste handlers
-- [ ] 11.3 Implement `exportAsHtml()` + `exportAsMarkdown()` on EditorAPI + download helpers
-- [ ] 11.4 Add print support via `@media print` CSS + `window.print()` call
-- [ ] 11.5 Implement sticky toolbar CSS + `ToolbarConfig.sticky` flag
-- [ ] 11.6 Implement custom `BobmdTheme` object → inline CSS variable application
-- [ ] 11.7 Wire all features into `BobEditor.tsx` and write integration tests
+- [x] 11.1 Implement `src/hooks/useStorageSync.ts` with write-through + ADR-008 controlled guard
+- [x] 11.2 Wire image upload optimistic flow into InsertImage dialog, drag-drop, and paste handlers
+- [x] 11.3 Implement `exportAsHtml()` + `exportAsMarkdown()` on EditorAPI + download helpers
+- [x] 11.4 Add print support via `@media print` CSS + `window.print()` call
+- [x] 11.5 Implement sticky toolbar CSS + `ToolbarConfig.sticky` flag
+- [x] 11.6 Implement custom `BobmdTheme` object → inline CSS variable application
+- [x] 11.7 Wire all features into `BobEditor.tsx` and write integration tests
 
 ## Implementation Details
 
 See TechSpec 'Data Models' → Storage Payload for the storage key/value format and session disable behavior, ADR-008 for the full controlled-vs-storage semantics decision. TechSpec Integration Points table for the `onImageUpload` boundary and error contract.
 
 Key constraints:
+
 - Storage: raw markdown string stored under `storageKey` prop (default `"markdown-editor-content"`); no JSON wrapper in v1.0.
 - Image upload optimistic: the placeholder is a syntactically valid markdown image so the preview renders it immediately; the placeholder must be uniquely identifiable (e.g., append a nonce) to allow clean replacement.
 - Paste detection: check `e.clipboardData.files[0].type.startsWith('image/')` before routing to upload.

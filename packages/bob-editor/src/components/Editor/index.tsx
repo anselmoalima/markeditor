@@ -13,6 +13,7 @@ export interface EditorProps {
   editorRef: React.MutableRefObject<MonacoEditorNS.IStandaloneCodeEditor | null>;
   onChange: (value: string, source: 'monaco') => void;
   onSelectionChange?: (selection: { start: number; end: number; cursor: number }) => void;
+  onPasteFile?: (file: File) => void;
 }
 
 export function Editor({
@@ -23,6 +24,7 @@ export function Editor({
   editorRef,
   onChange,
   onSelectionChange,
+  onPasteFile,
 }: EditorProps): JSX.Element {
   const isClient = typeof window !== 'undefined';
   const [shouldLoadMonaco, setShouldLoadMonaco] = useState(false);
@@ -40,6 +42,7 @@ export function Editor({
       {...(placeholder !== undefined ? { placeholder } : {})}
       {...(readOnly !== undefined ? { readOnly } : {})}
       {...(onSelectionChange ? { onSelectionChange } : {})}
+      {...(onPasteFile ? { onPasteFile } : {})}
     />
   );
 
@@ -57,6 +60,7 @@ export function Editor({
         {...(readOnly !== undefined ? { readOnly } : {})}
         {...(editorOptions ? { editorOptions } : {})}
         {...(onSelectionChange ? { onSelectionChange } : {})}
+        {...(onPasteFile ? { onPasteFile } : {})}
       />
     </Suspense>
   );

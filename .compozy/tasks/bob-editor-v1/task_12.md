@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Playground scenarios (15 routes) + Playwright E2E
 type: test
 complexity: high
@@ -37,19 +37,20 @@ Implement all 15 playground scenario routes from PRD §7.5 in `apps/playground/s
 
 ## Subtasks
 
-- [ ] 12.1 Create `apps/playground/src/App.tsx` router with DevTools sidebar + route list
-- [ ] 12.2 Implement all 15 scenario route components in `apps/playground/src/scenarios/`
-- [ ] 12.3 Set up MSW in playground for image upload scenario
-- [ ] 12.4 Configure Playwright (`playwright.config.ts`) with Chromium + Firefox + WebKit + baseURL
-- [ ] 12.5 Write E2E specs: typing, toggle, shortcuts, upload (success + failure), export, large-doc, SSR
-- [ ] 12.6 Add `@axe-core/playwright` a11y scan per scenario route
-- [ ] 12.7 Confirm `pnpm --filter playground e2e` passes all specs on all browsers
+- [x] 12.1 Create `apps/playground/src/App.tsx` router with DevTools sidebar + route list
+- [x] 12.2 Implement all 15 scenario route components in `apps/playground/src/scenarios/`
+- [x] 12.3 Set up MSW in playground for image upload scenario
+- [x] 12.4 Configure Playwright (`playwright.config.ts`) with Chromium + Firefox + WebKit + baseURL
+- [x] 12.5 Write E2E specs: typing, toggle, shortcuts, upload (success + failure), export, large-doc, SSR
+- [x] 12.6 Add `@axe-core/playwright` a11y scan per scenario route
+- [x] 12.7 Confirm `pnpm --filter playground e2e` passes all specs on all browsers
 
 ## Implementation Details
 
 See TechSpec 'Development Sequencing' → Build Order step 3 (playground scaffold) and PRD §7.5 for the full scenario list. The playground consumes `bob-editor` via `workspace:*` symlink; no build step is needed between editing the library and seeing changes in the playground (Vite HMR).
 
 Key constraints:
+
 - `ssr-safe` scenario: simulate SSR by rendering BobEditor with `window` undefined or by using a Next.js-like pattern where the component mounts only after hydration; TextareaFallback must be visible before Monaco loads.
 - `large-document` scenario: load a 10k-line fixture; assert that the preview renders within 3 seconds (Playwright `waitForSelector` with a timeout).
 - Shortcut tests: use `page.keyboard.press('Control+b')` on Linux/Windows and `Meta+b` on Mac; Playwright allows keyboard layout selection.

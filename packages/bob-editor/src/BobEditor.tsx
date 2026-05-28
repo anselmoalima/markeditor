@@ -26,6 +26,8 @@ import { InsertTable } from './components/Dialogs/InsertTable.js';
 import { ShortcutsHelp } from './components/Dialogs/ShortcutsHelp.js';
 import { resolveMessages } from './i18n/index.js';
 import { useMonacoPrefetch } from './hooks/useMonacoPrefetch.js';
+import { useStorageSync } from './hooks/useStorageSync.js';
+import { downloadFile } from './utils/download.js';
 import type {
   BobEditorProps,
   BobEditorRef,
@@ -96,7 +98,10 @@ function getResolvedTheme(theme: BobEditorProps['theme'], autoDark: boolean): Bo
 function toStyleObject(theme: BobmdTheme): React.CSSProperties {
   const style: React.CSSProperties = {};
   for (const [key, value] of Object.entries(theme)) {
-    (style as Record<string, string>)[key] = value;
+    // Only apply --mde-* prefixed CSS custom properties; silently ignore others
+    if (key.startsWith('--mde-')) {
+      (style as Record<string, string>)[key] = value;
+    }
   }
   return style;
 }
@@ -130,11 +135,14 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
   const onMountCalledRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Stable ref for onSave to avoid re-firing shortcuts effect
+  // Stable refs for callbacks to prevent unnecessary effect re-runs
   const onSaveRef = useRef(props.onSave);
   onSaveRef.current = props.onSave;
+  const onImageUploadRef = useRef(props.onImageUpload);
+  onImageUploadRef.current = props.onImageUpload;
+  const onErrorRef = useRef(props.onError);
+  onErrorRef.current = props.onError;
 
-  // Stable ref for setOpenDialog
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
   const setOpenDialogRef = useRef(setOpenDialog);
   setOpenDialogRef.current = setOpenDialog;
@@ -147,7 +155,6 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
     [dispatch],
   );
 
-  // Stable ref for api to avoid re-firing shortcuts effect
   const apiRef = useRef(api);
   apiRef.current = api;
 
@@ -206,7 +213,6 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
     }
   }, [props.mode, state.mode]);
 
-  // Stable shortcuts props refs
   const shortcutsOverrideRef = useRef(props.shortcuts?.override);
   shortcutsOverrideRef.current = props.shortcuts?.override;
   const shortcutsDisableRef = useRef(props.shortcuts?.disable);
@@ -216,7 +222,6 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
     if (typeof document === 'undefined') return;
     const manager = shortcutManagerRef.current;
 
-    // 1. Register default shortcuts
     const defaultShortcuts: KeyboardShortcut[] = [
       { id: 'bold', keys: 'Mod+B', label: 'Bold', action: (a) => a.wrapSelection('**', '**') },
       { id: 'italic', keys: 'Mod+I', label: 'Italic', action: (a) => a.wrapSelection('*', '*') },
@@ -328,19 +333,16 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
 
     manager.register(defaultShortcuts, apiRef.current);
 
-    // 2. Register plugin shortcuts
     const pluginShortcuts = activePluginsRef.current.flatMap((p) => p.shortcuts ?? []);
     if (pluginShortcuts.length > 0) {
       manager.register(pluginShortcuts, apiRef.current);
     }
 
-    // 3. Apply prop overrides
     const overrides = shortcutsOverrideRef.current ?? [];
     if (overrides.length > 0) {
       manager.register(overrides, apiRef.current);
     }
 
-    // 4. Apply disables
     for (const id of shortcutsDisableRef.current ?? []) {
       manager.disable(id);
     }
@@ -363,6 +365,16 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
     props.onModeChange?.(nextMode);
   };
 
+  // Storage sync
+  useStorageSync({
+    markdown: state.markdown,
+    dispatch,
+    isControlled: props.value !== undefined,
+    hasDefaultValue: props.defaultValue !== undefined,
+    storage: props.storage,
+    onError: props.onError,
+  });
+
   const mergedRemarkPlugins = useMemo(() => {
     const list = [...(props.remarkPlugins ?? [])];
     for (const plugin of activePluginsRef.current) {
@@ -371,7 +383,6 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
       }
     }
     return list;
-    // managerReady ensures the memo recalculates after plugins are registered
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.remarkPlugins, props.plugins, managerReady]);
 
@@ -382,7 +393,6 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
         list.push(...plugin.rehypePlugins);
       }
     }
-    // Wire onAfterRender hooks as a unified rehype plugin (before rehype-sanitize)
     const afterRenderPlugins = activePluginsRef.current.filter((p) => p.onAfterRender);
     if (afterRenderPlugins.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -404,12 +414,99 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.components, props.plugins, managerReady]);
 
+  // Image upload: insert optimistic placeholder, call onImageUpload, replace/rollback
+  const handleUploadImage = async (file: File): Promise<void> => {
+    const uploadFn = onImageUploadRef.current;
+    if (!uploadFn) return;
+    const nonce = Math.random().toString(36).slice(2, 10);
+    const placeholder = `![Uploading...](data:image/upload-${nonce})`;
+    api.insertText(placeholder);
+    try {
+      const { url, alt } = await uploadFn(file);
+      const current = stateRef.current.markdown;
+      const next = current.replace(placeholder, `![${alt ?? ''}](${url})`);
+      setMarkdown(next, 'api');
+    } catch (err) {
+      const current = stateRef.current.markdown;
+      const next = current.replace(placeholder, '');
+      setMarkdown(next, 'api');
+      onErrorRef.current?.(err instanceof Error ? err : new Error(String(err)));
+    }
+  };
+
+  // Drag-drop handler
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
+    if (!onImageUploadRef.current) return;
+    const hasImageFile = Array.from(e.dataTransfer.items).some(
+      (item) => item.kind === 'file' && item.type.startsWith('image/'),
+    );
+    if (hasImageFile) {
+      e.preventDefault();
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>): void => {
+    if (!onImageUploadRef.current) return;
+    const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith('image/'));
+    if (files.length === 0) return;
+    e.preventDefault();
+    for (const file of files) {
+      void handleUploadImage(file);
+    }
+  };
+
+  // Export internals
+  const exportAsHtmlInternal = async (): Promise<string> => {
+    const { renderToStaticMarkup } = await import('react-dom/server');
+    const processor = buildProcessor({
+      remarkPlugins: mergedRemarkPlugins,
+      rehypePlugins: mergedRehypePlugins,
+      components: mergedComponents,
+      sanitizeSchema: pluginManagerRef.current.getActiveSchema(),
+    });
+    const generationRef = { current: 1 };
+    const element = await processPipeline(stateRef.current.markdown, processor, 1, generationRef);
+    return element ? renderToStaticMarkup(element) : '';
+  };
+
   const resolvedTheme = getResolvedTheme(props.theme, autoDark);
 
   const resolvedI18n = useMemo(
     () => resolveMessages(props.locale ?? 'en', props.i18n),
     [props.locale, props.i18n],
   );
+
+  // Export config
+  const enableExport = props.enableExport;
+  const exportFilename =
+    typeof enableExport === 'object' ? (enableExport.filename ?? 'document') : 'document';
+  const showExportHtml =
+    enableExport === true || (typeof enableExport === 'object' && enableExport.html !== false);
+  const showExportMarkdown =
+    enableExport === true || (typeof enableExport === 'object' && enableExport.markdown !== false);
+  const showExportPrint =
+    enableExport === true || (typeof enableExport === 'object' && enableExport.print !== false);
+
+  const handleExportHtml = enableExport
+    ? async () => {
+        const html = await exportAsHtmlInternal();
+        downloadFile(`${exportFilename}.html`, html, 'text/html');
+      }
+    : undefined;
+
+  const handleExportMarkdown = enableExport
+    ? () => {
+        downloadFile(`${exportFilename}.md`, stateRef.current.markdown, 'text/markdown');
+      }
+    : undefined;
+
+  const handleExportPrint = enableExport
+    ? () => {
+        if (typeof window !== 'undefined') {
+          window.print();
+        }
+      }
+    : undefined;
 
   useImperativeHandle(
     ref,
@@ -430,32 +527,23 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
         api.insertText(text);
       },
       getSelection: () => api.getSelection(),
-      exportAsHtml: async () => {
-        const { renderToStaticMarkup } = await import('react-dom/server');
-        const processor = buildProcessor({
-          remarkPlugins: mergedRemarkPlugins,
-          rehypePlugins: mergedRehypePlugins,
-          components: mergedComponents,
-          sanitizeSchema: pluginManagerRef.current.getActiveSchema(),
-        });
-        const generationRef = { current: 1 };
-        const element = await processPipeline(
-          stateRef.current.markdown,
-          processor,
-          1,
-          generationRef,
-        );
-        return element ? renderToStaticMarkup(element) : '';
-      },
+      exportAsHtml: exportAsHtmlInternal,
       exportAsMarkdown: () => stateRef.current.markdown,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [api, mergedComponents, mergedRehypePlugins, mergedRemarkPlugins],
   );
 
   return (
     <BobEditorStateContext.Provider value={state}>
       <BobEditorApiContext.Provider value={api}>
-        <div className="bobmd-root" data-testid="bobmd-root" style={toStyleObject(resolvedTheme)}>
+        <div
+          className="bobmd-root"
+          data-testid="bobmd-root"
+          style={toStyleObject(resolvedTheme)}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
           {props.toolbar !== false && (
             <Toolbar
               config={props.toolbar ?? true}
@@ -464,6 +552,9 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
               onOpenInsertImage={() => setOpenDialog('insertImage')}
               onOpenInsertTable={() => setOpenDialog('insertTable')}
               onOpenShortcutsHelp={() => setOpenDialog('shortcutsHelp')}
+              {...(handleExportHtml != null ? { onExportHtml: handleExportHtml } : {})}
+              {...(handleExportMarkdown != null ? { onExportMarkdown: handleExportMarkdown } : {})}
+              {...(handleExportPrint != null ? { onExportPrint: handleExportPrint } : {})}
             />
           )}
           <div ref={containerRef} className="bobmd-main">
@@ -484,6 +575,7 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
                 {...(props.placeholder !== undefined ? { placeholder: props.placeholder } : {})}
                 {...(props.readOnly !== undefined ? { readOnly: props.readOnly } : {})}
                 {...(props.editorOptions ? { editorOptions: props.editorOptions } : {})}
+                {...(onImageUploadRef.current ? { onPasteFile: handleUploadImage } : {})}
               />
             ) : (
               <Preview
@@ -516,6 +608,9 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
             onClose={() => setOpenDialog(null)}
             onInsert={(url, altText) => api.insertText(`![${altText}](${url})`)}
             i18n={resolvedI18n}
+            {...(onImageUploadRef.current
+              ? { onUploadFile: (file) => void handleUploadImage(file) }
+              : {})}
           />
           <InsertTable
             isOpen={openDialog === 'insertTable'}

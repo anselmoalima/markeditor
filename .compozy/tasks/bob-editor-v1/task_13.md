@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: A11y audit + perf bench + docs + examples + publish v1.0.0
 type: docs
 complexity: critical
@@ -62,6 +62,7 @@ Complete the full v1.0.0 Definition of Done: zero WCAG 2.1 AA violations (jest-a
 See PRD §12 (Definition of Done) for the full checklist. TechSpec 'Monitoring and Observability' → Dev-mode warnings section for what should appear in dev mode but not production.
 
 Key constraints:
+
 - jest-axe audit: run `axe(container)` after mounting `<BobEditor>` with the relevant surface active; `toHaveNoViolations()` must pass before proceeding.
 - Bench gate: `vitest bench` uses `baseline.json`; if CI environment produces results >1.2× baseline, fail. Update baseline.json when intentional perf improvements land (commit explicitly).
 - `README.md` Bundler recipes: must include a working `vite.config.ts` snippet that resolves Monaco workers; must include a Next.js App Router snippet using `dynamic(() => import('bob-editor'), { ssr: false })`.

@@ -5,6 +5,7 @@ export interface InsertImageProps {
   isOpen: boolean;
   onClose: () => void;
   onInsert: (url: string, altText: string) => void;
+  onUploadFile?: (file: File) => void;
   i18n: Record<string, string>;
 }
 
@@ -12,11 +13,13 @@ export function InsertImage({
   isOpen,
   onClose,
   onInsert,
+  onUploadFile,
   i18n,
 }: InsertImageProps): JSX.Element | null {
   const [url, setUrl] = useState('');
   const [altText, setAltText] = useState('');
   const urlInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,6 +53,15 @@ export function InsertImage({
     if (!url) return;
     onInsert(url, altText);
     onClose();
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): void {
+    const file = e.currentTarget.files?.[0];
+    if (!file || !onUploadFile) return;
+    onUploadFile(file);
+    onClose();
+    // Reset so same file can be selected again
+    e.currentTarget.value = '';
   }
 
   function handleTabTrap(e: React.KeyboardEvent<HTMLDivElement>): void {
@@ -114,6 +126,26 @@ export function InsertImage({
         </div>
 
         <div className="bobmd-dialog__actions">
+          {onUploadFile != null && (
+            <>
+              <input
+                ref={fileInputRef}
+                id="bobmd-insert-image-file"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                data-testid="bobmd-insert-image-file-input"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                data-testid="bobmd-upload-file-btn"
+              >
+                {i18n['uploadFile'] ?? 'Upload File'}
+              </button>
+            </>
+          )}
           <button type="button" onClick={onClose}>
             {i18n['cancel'] ?? 'Cancel'}
           </button>

@@ -11,6 +11,7 @@ export interface MonacoEditorProps {
   editorRef: React.MutableRefObject<MonacoEditorNS.IStandaloneCodeEditor | null>;
   onChange: (value: string) => void;
   onSelectionChange?: (selection: { start: number; end: number; cursor: number }) => void;
+  onPasteFile?: (file: File) => void;
 }
 
 export default function MonacoEditor({
@@ -21,6 +22,7 @@ export default function MonacoEditor({
   editorRef,
   onChange,
   onSelectionChange,
+  onPasteFile,
 }: MonacoEditorProps): JSX.Element {
   useEffect(() => {
     const editor = editorRef.current;
@@ -57,10 +59,27 @@ export default function MonacoEditor({
             onChange(editor.getValue());
           });
 
+          // Paste handler for image files
+          const domNode = editor.getDomNode();
+          let pasteHandler: ((e: ClipboardEvent) => void) | undefined;
+          if (domNode && onPasteFile) {
+            pasteHandler = (e: ClipboardEvent) => {
+              const file = e.clipboardData?.files?.[0];
+              if (file && file.type.startsWith('image/')) {
+                e.preventDefault();
+                onPasteFile(file);
+              }
+            };
+            domNode.addEventListener('paste', pasteHandler as EventListener);
+          }
+
           const originalDispose = editor.dispose.bind(editor);
           editor.dispose = () => {
             selectDisposable.dispose();
             contentDisposable.dispose();
+            if (domNode && pasteHandler) {
+              domNode.removeEventListener('paste', pasteHandler as EventListener);
+            }
             originalDispose();
           };
         }}

@@ -248,6 +248,42 @@
   font-weight: 600;
 }
 
+/* Sticky toolbar */
+.bobmd-toolbar--sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Export bar */
+.bobmd-export-bar {
+  border-top: 1px solid var(--mde-border, #d0d0d0);
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+}
+
+.bobmd-export-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--mde-border, #d0d0d0);
+  border-radius: 4px;
+  color: var(--mde-fg, #1a1a1a);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 3px 10px;
+}
+
+.bobmd-export-btn:hover {
+  background: var(--mde-border, #d0d0d0);
+}
+
+.bobmd-export-btn:focus-visible {
+  outline: 2px solid var(--mde-accent, #0066cc);
+  outline-offset: 1px;
+}
+
 /* StatusBar */
 .bobmd-status-bar {
   border-top: 1px solid var(--mde-border, #d0d0d0);
@@ -262,4 +298,23 @@
 .bobmd-status-bar__word-count,
 .bobmd-status-bar__saved-at {
   white-space: nowrap;
+}
+
+@media print {
+  .bobmd-toolbar,
+  .bobmd-mode-toggle-wrap,
+  .bobmd-status-bar,
+  .bobmd-dialog-overlay,
+  .bobmd-export-bar {
+    display: none !important;
+  }
+
+  .bobmd-root {
+    border: 0;
+  }
+
+  .bobmd-preview {
+    border: 0;
+    padding: 0;
+  }
 }

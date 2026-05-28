@@ -1,6 +1,6 @@
 {
   "name": "bob-editor",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Fully-featured React Markdown editor with Monaco, GFM, math, Mermaid, and plugin system",
   "license": "MIT",
   "author": "anselmodev",

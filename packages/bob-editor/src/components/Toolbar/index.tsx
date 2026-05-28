@@ -11,6 +11,9 @@ export interface ToolbarProps {
   onOpenInsertImage: () => void;
   onOpenInsertTable: () => void;
   onOpenShortcutsHelp: () => void;
+  onExportHtml?: (() => void | Promise<void>) | undefined;
+  onExportMarkdown?: (() => void) | undefined;
+  onExportPrint?: (() => void) | undefined;
 }
 
 interface DefaultButtonDef {
@@ -26,6 +29,9 @@ export function Toolbar({
   onOpenInsertImage,
   onOpenInsertTable,
   onOpenShortcutsHelp,
+  onExportHtml,
+  onExportMarkdown,
+  onExportPrint,
 }: ToolbarProps): JSX.Element | null {
   const api = useEditorApi();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -162,8 +168,9 @@ export function Toolbar({
   let buttonsToRender: JSX.Element[];
   let overflowButtons: JSX.Element[] | null = null;
 
+  const isSticky = typeof config === 'object' && config.sticky === true;
+
   if (config === true) {
-    // All default buttons
     const all = defaultButtons.map(renderDefaultButton);
     if (isOverflow) {
       buttonsToRender = all.slice(0, 5);
@@ -172,7 +179,6 @@ export function Toolbar({
       buttonsToRender = all;
     }
   } else {
-    // ToolbarConfig with items
     const items = (config as ToolbarConfig).items ?? defaultButtons.map((b) => b.id);
     const rendered = items.map((item) => renderConfigItem(item)).filter(Boolean) as JSX.Element[];
     if (isOverflow) {
@@ -187,10 +193,12 @@ export function Toolbar({
   void onOpenInsertTable;
   void onOpenShortcutsHelp;
 
+  const hasExport = onExportHtml != null || onExportMarkdown != null || onExportPrint != null;
+
   return (
     <div
       ref={containerRef}
-      className="bobmd-toolbar"
+      className={`bobmd-toolbar${isSticky ? ' bobmd-toolbar--sticky' : ''}`}
       data-testid="bobmd-toolbar"
       role="toolbar"
       aria-label="Editor toolbar"
@@ -214,6 +222,45 @@ export function Toolbar({
             </div>
           )}
         </>
+      )}
+      {hasExport && (
+        <div
+          className="bobmd-export-bar"
+          data-testid="bobmd-export-bar"
+          role="group"
+          aria-label="Export"
+        >
+          {onExportHtml != null && (
+            <button
+              type="button"
+              className="bobmd-export-btn"
+              data-testid="bobmd-export-html-btn"
+              onClick={onExportHtml}
+            >
+              {i18n['exportHtml'] ?? 'Export HTML'}
+            </button>
+          )}
+          {onExportMarkdown != null && (
+            <button
+              type="button"
+              className="bobmd-export-btn"
+              data-testid="bobmd-export-md-btn"
+              onClick={onExportMarkdown}
+            >
+              {i18n['exportMarkdown'] ?? 'Export Markdown'}
+            </button>
+          )}
+          {onExportPrint != null && (
+            <button
+              type="button"
+              className="bobmd-export-btn"
+              data-testid="bobmd-export-print-btn"
+              onClick={onExportPrint}
+            >
+              {i18n['print'] ?? 'Print'}
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

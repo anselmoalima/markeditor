@@ -1,0 +1,18 @@
+@media print {
+  .bobmd-toolbar,
+  .bobmd-mode-toggle-wrap,
+  .bobmd-status-bar,
+  .bobmd-dialog-overlay,
+  .bobmd-export-bar {
+    display: none !important;
+  }
+
+  .bobmd-root {
+    border: 0;
+  }
+
+  .bobmd-preview {
+    border: 0;
+    padding: 0;
+  }
+}
