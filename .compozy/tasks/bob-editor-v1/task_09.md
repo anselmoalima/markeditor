@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Extended markdown — math, mermaid, alerts, footnotes, highlight (v0.3.0)
 type: frontend
 complexity: high
@@ -39,21 +39,22 @@ Implement the rich preview rendering components (KaTeX math, Mermaid diagrams, G
 
 ## Subtasks
 
-- [ ] 9.1 Implement `src/components/Preview/CodeBlock.tsx` with lazy highlight.js + copy button
-- [ ] 9.2 Implement `src/components/Preview/MathBlock.tsx` with error boundary + KaTeX CSS injection
-- [ ] 9.3 Implement `src/components/Preview/MermaidDiagram.tsx` with error boundary + SVG re-sanitize
-- [ ] 9.4 Implement `src/components/Preview/Alert.tsx` for all 5 GitHub callout variants
-- [ ] 9.5 Implement `src/components/Preview/SafeImage.tsx` + `SafeLink.tsx`
-- [ ] 9.6 Implement `src/plugins/builtin/` — gfm, math, mermaid, alerts, footnotes as BobEditorPlugin
-- [ ] 9.7 Add all built-in plugins to BobEditor default plugin list + components map
-- [ ] 9.8 Extend markdown fixture files for each feature; write fixture-based pipeline tests
-- [ ] 9.9 Write `tests/bench/pipeline.bench.ts`; establish baseline JSON
+- [x] 9.1 Implement `src/components/Preview/CodeBlock.tsx` with lazy highlight.js + copy button
+- [x] 9.2 Implement `src/components/Preview/MathBlock.tsx` with error boundary + KaTeX CSS injection
+- [x] 9.3 Implement `src/components/Preview/MermaidDiagram.tsx` with error boundary + SVG re-sanitize
+- [x] 9.4 Implement `src/components/Preview/Alert.tsx` for all 5 GitHub callout variants
+- [x] 9.5 Implement `src/components/Preview/SafeImage.tsx` + `SafeLink.tsx`
+- [x] 9.6 Implement `src/plugins/builtin/` — gfm, math, mermaid, alerts, footnotes as BobEditorPlugin
+- [x] 9.7 Add all built-in plugins to BobEditor default plugin list + components map
+- [x] 9.8 Extend markdown fixture files for each feature; write fixture-based pipeline tests
+- [x] 9.9 Write `tests/bench/pipeline.bench.ts`; establish baseline JSON
 
 ## Implementation Details
 
 See TechSpec 'System Architecture' → Component Overview for the Preview component hierarchy, ADR-002 for pipeline composition with plugin `remarkPlugins`/`rehypePlugins`, ADR-004 for sanitize schema extensions per plugin, ADR-006 for lazy-load registry and content detector patterns.
 
 Key constraints:
+
 - KaTeX CSS injection: check `document.head.querySelector('link[data-bobmd-katex]')` before injecting; set `data-bobmd-katex` on the injected link so subsequent calls skip it.
 - Mermaid SVG re-sanitize: after `mermaid.render()`, pass the SVG string through a strict allow-list (only safe SVG presentation tags; strip `<a href>` inside SVG unless absolute https).
 - `CodeBlock` copy button: use `navigator.clipboard.writeText()` with a fallback to `document.execCommand('copy')`; show a visual "Copied!" confirmation for 2 seconds.

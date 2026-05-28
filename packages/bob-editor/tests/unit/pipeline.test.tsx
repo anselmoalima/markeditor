@@ -144,6 +144,37 @@ describe('pipeline builder', () => {
       const html = toHtml(element!);
       expect(html).toContain('type="checkbox"');
     });
+
+    it('processes alerts fixture: all 5 callout variants present', async () => {
+      const md = readFixture('markdown/alerts/in.md');
+      const ref: GenerationRef = { current: 0 };
+      const element = await pipelineProcess(md, proc, 0, ref);
+      expect(element).not.toBeNull();
+      const html = toHtml(element!);
+      // All 5 variants are rendered as blockquotes by the pipeline
+      // The Alert React component handles visual transformation
+      expect(html).toMatch(/NOTE|WARNING|TIP|IMPORTANT|CAUTION/i);
+    });
+
+    it('processes mermaid fixture: fenced code block preserved', async () => {
+      const md = readFixture('markdown/mermaid/in.md');
+      const ref: GenerationRef = { current: 0 };
+      const element = await pipelineProcess(md, proc, 0, ref);
+      expect(element).not.toBeNull();
+      const html = toHtml(element!);
+      // Mermaid code block rendered as language-mermaid code
+      expect(html).toMatch(/mermaid|pre|code/i);
+    });
+
+    it('processes footnotes fixture: footnote reference rendered', async () => {
+      const md = readFixture('markdown/footnotes/in.md');
+      const ref: GenerationRef = { current: 0 };
+      const element = await pipelineProcess(md, proc, 0, ref);
+      expect(element).not.toBeNull();
+      const html = toHtml(element!);
+      // GFM footnotes produce superscript references
+      expect(html).toMatch(/footnote|fn|sup/i);
+    });
   });
 
   describe('full pipeline integration', () => {

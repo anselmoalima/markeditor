@@ -37,6 +37,21 @@ import type {
 import { lightTheme } from './themes/light.js';
 import { darkTheme } from './themes/dark.js';
 import { isAutoDark } from './themes/auto.js';
+import {
+  gfmPlugin,
+  mathPlugin,
+  mermaidPlugin,
+  alertsPlugin,
+  footnotesPlugin,
+} from './plugins/builtin/index.js';
+
+const BUILTIN_PLUGINS: readonly BobEditorPlugin[] = [
+  gfmPlugin,
+  mathPlugin,
+  mermaidPlugin,
+  alertsPlugin,
+  footnotesPlugin,
+];
 
 type OpenDialog = 'insertLink' | 'insertImage' | 'insertTable' | 'shortcutsHelp' | null;
 
@@ -134,7 +149,7 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
   }, [props.theme]);
 
   useEffect(() => {
-    const plugins = props.plugins ?? [];
+    const plugins = props.plugins ?? BUILTIN_PLUGINS;
     const manager = pluginManagerRef.current;
     const registered = manager.register(plugins, api);
     activePluginsRef.current = registered;
@@ -337,7 +352,9 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
       }
     }
     return list;
-  }, [props.remarkPlugins, props.plugins]);
+    // managerReady ensures the memo recalculates after plugins are registered
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.remarkPlugins, props.plugins, managerReady]);
 
   const mergedRehypePlugins = useMemo(() => {
     const list = [...(props.rehypePlugins ?? [])];
@@ -347,7 +364,8 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
       }
     }
     return list;
-  }, [props.rehypePlugins, props.plugins]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.rehypePlugins, props.plugins, managerReady]);
 
   const mergedComponents = useMemo(() => {
     const merged: Record<string, React.ComponentType<unknown>> = {};
@@ -358,7 +376,8 @@ export const BobEditor = forwardRef<BobEditorRef, BobEditorProps>(function BobEd
     }
     Object.assign(merged, props.components ?? {});
     return merged;
-  }, [props.components, props.plugins]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.components, props.plugins, managerReady]);
 
   const resolvedTheme = getResolvedTheme(props.theme, autoDark);
 

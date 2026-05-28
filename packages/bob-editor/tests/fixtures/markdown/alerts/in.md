@@ -6,3 +6,9 @@
 
 > [!TIP]
 > This is a tip.
+
+> [!IMPORTANT]
+> This is important.
+
+> [!CAUTION]
+> This is a caution.

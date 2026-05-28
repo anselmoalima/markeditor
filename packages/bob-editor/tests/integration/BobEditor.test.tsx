@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import { BobEditor } from '../../src/BobEditor.js';
@@ -162,5 +162,61 @@ describe('BobEditor integration', () => {
   it('SSR-safe fallback renders without Monaco errors', () => {
     expect(() => render(<BobEditor defaultValue="server-safe" />)).not.toThrow();
     expect(getEditorInput()).toBeInTheDocument();
+  });
+
+  it('preview mode with math renders KaTeX output', async () => {
+    const user = userEvent.setup();
+    render(<BobEditor defaultValue="$E=mc^2$" defaultMode="edit" />);
+    await user.click(screen.getByTestId('bobmd-mode-toggle'));
+    // Wait for async pipeline to produce KaTeX output
+    await waitFor(
+      () => {
+        const preview = screen.getByTestId('bobmd-preview');
+        expect(preview.innerHTML).toMatch(/katex|math/i);
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it('preview mode with malformed math does not crash preview', async () => {
+    const user = userEvent.setup();
+    render(<BobEditor defaultValue="$\\invalidcommand$" defaultMode="edit" />);
+    await user.click(screen.getByTestId('bobmd-mode-toggle'));
+    const preview = await screen.findByTestId('bobmd-preview');
+    // Preview container should still be present regardless of math parse errors
+    await act(async () => {});
+    expect(preview).toBeInTheDocument();
+  });
+
+  it('preview mode with code block shows copy button', async () => {
+    const user = userEvent.setup();
+    render(<BobEditor defaultValue={'```javascript\nconst x = 1;\n```'} defaultMode="edit" />);
+    await user.click(screen.getByTestId('bobmd-mode-toggle'));
+    // Wait for preview pipeline to complete and CodeBlock component to mount
+    await waitFor(
+      () => {
+        const preview = screen.getByTestId('bobmd-preview');
+        const copyBtn = preview.querySelector('.bobmd-copy-btn');
+        expect(copyBtn).toBeTruthy();
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it('KaTeX CSS link injected exactly once when two BobEditor instances mount', async () => {
+    document.head.querySelectorAll('link[data-bobmd-katex]').forEach((el) => el.remove());
+
+    render(
+      <div>
+        <BobEditor defaultValue="$a$" />
+        <BobEditor defaultValue="$b$" />
+      </div>,
+    );
+
+    await act(async () => {});
+    const links = document.head.querySelectorAll('link[data-bobmd-katex]');
+    expect(links.length).toBe(1);
+
+    document.head.querySelectorAll('link[data-bobmd-katex]').forEach((el) => el.remove());
   });
 });

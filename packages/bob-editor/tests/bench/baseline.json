@@ -1,0 +1,10 @@
+{
+  "version": "0.3.0",
+  "date": "2026-05-28",
+  "benchmarks": {
+    "1k-line document": { "p50_ms": 50, "p95_ms": 80 },
+    "5k-line document": { "p50_ms": 150, "p95_ms": 200 },
+    "10k-line document": { "p50_ms": 250, "p95_ms": 300 }
+  },
+  "threshold": 1.2
+}
