@@ -81,3 +81,185 @@
   position: absolute;
   width: 1px;
 }
+
+/* Toolbar */
+.bobmd-toolbar {
+  --mde-toolbar-bg: var(--mde-bg, #ffffff);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 8px;
+  background: var(--mde-toolbar-bg);
+  border-bottom: 1px solid var(--mde-border, #d0d0d0);
+  position: relative;
+}
+
+.bobmd-toolbar-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--mde-fg, #1a1a1a);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding: 4px 8px;
+  transition:
+    background 0.1s,
+    border-color 0.1s;
+}
+
+.bobmd-toolbar-btn:hover:not([disabled]) {
+  background: var(--mde-border, #d0d0d0);
+}
+
+.bobmd-toolbar-btn:focus-visible {
+  outline: 2px solid var(--mde-accent, #0066cc);
+  outline-offset: 1px;
+}
+
+.bobmd-toolbar-btn--active {
+  background: var(--mde-accent, #0066cc);
+  color: #ffffff;
+  border-color: var(--mde-accent, #0066cc);
+}
+
+.bobmd-toolbar-btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.bobmd-toolbar-overflow-menu {
+  background: var(--mde-bg, #ffffff);
+  border: 1px solid var(--mde-border, #d0d0d0);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 100;
+}
+
+/* Dialogs */
+.bobmd-dialog-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bobmd-dialog {
+  background: var(--mde-bg, #ffffff);
+  border: 1px solid var(--mde-border, #d0d0d0);
+  border-radius: var(--mde-border-radius, 6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  color: var(--mde-fg, #1a1a1a);
+  max-width: 480px;
+  padding: 24px;
+  width: 90vw;
+}
+
+.bobmd-dialog__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.bobmd-dialog__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.bobmd-dialog__field label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.bobmd-dialog__field input {
+  background: var(--mde-bg, #ffffff);
+  border: 1px solid var(--mde-border, #d0d0d0);
+  border-radius: 4px;
+  color: var(--mde-fg, #1a1a1a);
+  font: inherit;
+  padding: 6px 10px;
+}
+
+.bobmd-dialog__field input:focus {
+  outline: 2px solid var(--mde-accent, #0066cc);
+  outline-offset: 1px;
+}
+
+.bobmd-dialog__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.bobmd-dialog__actions button {
+  border: 1px solid var(--mde-border, #d0d0d0);
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  padding: 6px 14px;
+}
+
+.bobmd-dialog__actions button:last-child {
+  background: var(--mde-accent, #0066cc);
+  border-color: var(--mde-accent, #0066cc);
+  color: #ffffff;
+}
+
+.bobmd-dialog__actions button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* ShortcutsHelp table */
+.bobmd-shortcuts-table {
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.bobmd-shortcuts-table th,
+.bobmd-shortcuts-table td {
+  border: 1px solid var(--mde-border, #d0d0d0);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.bobmd-shortcuts-table th {
+  background: var(--mde-border, #d0d0d0);
+  font-weight: 600;
+}
+
+/* StatusBar */
+.bobmd-status-bar {
+  border-top: 1px solid var(--mde-border, #d0d0d0);
+  color: var(--mde-fg, #1a1a1a);
+  display: flex;
+  font-size: 0.75rem;
+  gap: 12px;
+  opacity: 0.7;
+  padding: 4px 12px;
+}
+
+.bobmd-status-bar__word-count,
+.bobmd-status-bar__saved-at {
+  white-space: nowrap;
+}

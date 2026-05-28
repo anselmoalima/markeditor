@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Toolbar + modals + default shortcuts + i18n base (v0.2.0)
 type: frontend
 complexity: high
@@ -37,21 +37,22 @@ Implement the configurable toolbar with all default buttons from PRD §5.4.2, th
 
 ## Subtasks
 
-- [ ] 8.1 Implement `src/components/Toolbar/index.tsx` + `ToolbarButton.tsx` with keyboard navigation and overflow
-- [ ] 8.2 Implement `src/components/Dialogs/InsertLink.tsx`, `InsertImage.tsx`, `InsertTable.tsx`
-- [ ] 8.3 Implement `src/components/Dialogs/ShortcutsHelp.tsx` (dynamic shortcut list)
-- [ ] 8.4 Register all PRD §5.6.1 default shortcuts via `shortcutManager` in BobEditor
-- [ ] 8.5 Implement `src/i18n/en.ts` + `pt-BR.ts` + `index.ts` resolver
-- [ ] 8.6 Implement `src/components/StatusBar.tsx` (word count + saved-at)
-- [ ] 8.7 Implement `src/hooks/useMonacoPrefetch.ts`
-- [ ] 8.8 Wire locale/i18n + shortcuts props in `BobEditor.tsx`
-- [ ] 8.9 Write integration tests for all toolbar buttons, modals, shortcuts
+- [x] 8.1 Implement `src/components/Toolbar/index.tsx` + `ToolbarButton.tsx` with keyboard navigation and overflow
+- [x] 8.2 Implement `src/components/Dialogs/InsertLink.tsx`, `InsertImage.tsx`, `InsertTable.tsx`
+- [x] 8.3 Implement `src/components/Dialogs/ShortcutsHelp.tsx` (dynamic shortcut list)
+- [x] 8.4 Register all PRD §5.6.1 default shortcuts via `shortcutManager` in BobEditor
+- [x] 8.5 Implement `src/i18n/en.ts` + `pt-BR.ts` + `index.ts` resolver
+- [x] 8.6 Implement `src/components/StatusBar.tsx` (word count + saved-at)
+- [x] 8.7 Implement `src/hooks/useMonacoPrefetch.ts`
+- [x] 8.8 Wire locale/i18n + shortcuts props in `BobEditor.tsx`
+- [x] 8.9 Write integration tests for all toolbar buttons, modals, shortcuts
 
 ## Implementation Details
 
 See TechSpec 'System Architecture' and PRD §5.4.2 (toolbar button list), §5.6.1 (default shortcuts), §5.9 (i18n). ADR-003 explains how toolbar reads EditorAPI context.
 
 Key constraints:
+
 - Toolbar overflow: use `ResizeObserver` on the toolbar container; buttons that overflow move to an overflow `<button>` menu.
 - Focus trap in dialogs: either use the native `<dialog>` element with `showModal()` or implement a manual focus-trap loop; Tab/Shift+Tab must cycle within the dialog; Esc closes.
 - `I18nMessages` keys are exactly the exported type from task_03; `pt-BR.ts` must satisfy `Record<MessageKey, string>` — enforce via a type test that `pt-BR` is assignable to `I18nMessages`.

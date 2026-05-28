@@ -11,7 +11,7 @@
 | 05  | Core pipeline — unified, sanitize merger, lazy registry, utils                    | completed | high       | task_03                                              |
 | 06  | Plugin manager + shortcut manager                                                 | completed | medium     | task_04, task_05                                     |
 | 07  | MVP: BobEditor shell + Monaco lazy + textarea fallback + toggle + themes (v0.1.0) | completed | critical   | task_04, task_05, task_06                            |
-| 08  | Toolbar + modals + default shortcuts + i18n base (v0.2.0)                         | pending   | high       | task_07                                              |
+| 08  | Toolbar + modals + default shortcuts + i18n base (v0.2.0)                         | completed | high       | task_07                                              |
 | 09  | Extended markdown — math, mermaid, alerts, footnotes, highlight (v0.3.0)          | pending   | high       | task_05, task_07                                     |
 | 10  | Opt-in built-in plugins — emoji, mentions, wordCount, TOC (v0.4.0)                | pending   | medium     | task_06, task_09                                     |
 | 11  | Image upload + storage + export + sticky toolbar + custom themes (v0.5.0)         | pending   | high       | task_07, task_08                                     |

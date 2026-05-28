@@ -10,6 +10,8 @@ export interface ParsedShortcut {
 
 export interface ShortcutEntry {
   id: string;
+  keys: string;
+  label?: string;
   parsed: ParsedShortcut;
   action: (api: EditorAPI) => void;
   disabled: boolean;
@@ -21,6 +23,7 @@ export interface ShortcutManager {
   override(id: string, newShortcut: string): void;
   disable(id: string): void;
   destroy(): void;
+  getEntries(): Array<{ id: string; keys: string; label?: string; disabled: boolean }>;
 }
 
 export interface ShortcutManagerOptions {
@@ -96,16 +99,27 @@ export function createShortcutManager(options: ShortcutManagerOptions = {}): Sho
       for (const s of shortcuts) {
         const existing = entries.find((e) => e.id === s.id);
         if (existing) {
+          existing.keys = s.keys;
+          if (s.label !== undefined) {
+            existing.label = s.label;
+          } else {
+            delete existing.label;
+          }
           existing.parsed = parseShortcut(s.keys);
           existing.action = s.action;
           existing.disabled = false;
         } else {
-          entries.push({
+          const entry: ShortcutEntry = {
             id: s.id,
+            keys: s.keys,
             parsed: parseShortcut(s.keys),
             action: s.action,
             disabled: false,
-          });
+          };
+          if (s.label !== undefined) {
+            entry.label = s.label;
+          }
+          entries.push(entry);
         }
       }
 
@@ -137,6 +151,20 @@ export function createShortcutManager(options: ShortcutManagerOptions = {}): Sho
       }
       entries.length = 0;
       boundApi = null;
+    },
+
+    getEntries() {
+      return entries.map((e) => {
+        const entry: { id: string; keys: string; label?: string; disabled: boolean } = {
+          id: e.id,
+          keys: e.keys,
+          disabled: e.disabled,
+        };
+        if (e.label !== undefined) {
+          entry.label = e.label;
+        }
+        return entry;
+      });
     },
   };
 }
